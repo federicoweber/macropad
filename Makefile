@@ -1,5 +1,6 @@
 CIRCUITPY ?= /Volumes/CIRCUITPY
 PYCACHE_DIR ?= /private/tmp/ai-macropad-pycache
+CIRCUP ?= circup
 
 .PHONY: check deploy install libraries
 
@@ -9,7 +10,7 @@ check:
 
 libraries:
 	test -d "$(CIRCUITPY)"
-	circup --path "$(CIRCUITPY)" install -r requirements.txt
+	$(CIRCUP) --path "$(CIRCUITPY)" install -r requirements.txt
 
 deploy:
 	test -d "$(CIRCUITPY)"
