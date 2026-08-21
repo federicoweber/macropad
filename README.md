@@ -50,14 +50,14 @@ app, including `Command+Option+N` for quick chat and `Command+N` for a new chat.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `OPEN` Town spotlight | `WIND` Town window | `ESC` Dismiss |
-| `@` Mention | `LINE` New line | `DEL` Delete mention |
-| `HOME` Home | `UP` Up | `FULL` Capture full screen |
+| `QCK` Quick Town | `FOCS` Focus Town window | `ESC` Dismiss |
+| `HOME` Home | `SECT` Capture selection | `FULL` Capture full screen |
+| `----` Unused | `UP` Up | `----` Unused |
 | `LEFT` Left | `DOWN` Down | `RGHT` Right |
 
-`OPEN` sends `Option+T`, `WIND` sends `Option+Shift+T`, `HOME` sends `Option+H`,
-and `FULL` sends `Option+F`. The remaining keys use Town's native assistant
-composer and mention-autocomplete controls.
+`QCK` sends `Option+T`, `FOCS` sends `Option+Shift+T`, `HOME` sends `Option+H`,
+`SECT` sends `Option+S`, and `FULL` sends `Option+F`. The final two rows form a
+navigation D-pad.
 
 ### 4. Music — green
 
