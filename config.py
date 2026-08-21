@@ -49,9 +49,9 @@ KEYMAP = (
         "color": (255, 139, 44),
     },
     {
-        "label": "NEW",
+        "label": "LINE",
         "action": "tap_hotkey",
-        "keys": ("COMMAND", "N"),
+        "keys": ("SHIFT", "ENTER"),
         "color": (255, 139, 44),
     },
     {
