@@ -3,8 +3,10 @@
 import unittest
 
 from config import (
+    ENCODER_LEFT_ARROW_POINTS,
     ENCODER_PRESSED_LEFT_KEYS,
     ENCODER_PRESSED_RIGHT_KEYS,
+    ENCODER_RIGHT_ARROW_POINTS,
     PROFILES,
     validate_profiles,
 )
@@ -44,6 +46,18 @@ class ProfileTests(unittest.TestCase):
             ENCODER_PRESSED_RIGHT_KEYS,
             ("CONTROL", "RIGHT_ARROW"),
         )
+
+    def test_pressed_encoder_navigation_arrows_fit_display(self):
+        self.assertEqual(
+            ENCODER_LEFT_ARROW_POINTS[0],
+            (6, 32),
+        )
+        self.assertEqual(
+            ENCODER_RIGHT_ARROW_POINTS[0],
+            (122, 32),
+        )
+        for points in (ENCODER_LEFT_ARROW_POINTS, ENCODER_RIGHT_ARROW_POINTS):
+            self.assertTrue(all(0 <= x < 128 and 0 <= y < 64 for x, y in points))
 
     def test_user_shortcut_overrides(self):
         flow_ptt = PROFILES[0]["keys"][0]

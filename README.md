@@ -6,10 +6,12 @@ workflow.
 
 Turn the encoder to switch between Wispr Flow, Codex, Town, and Media. Hold the
 encoder down while turning it to send `Control+Left` counterclockwise or
-`Control+Right` clockwise. The OLED shows the active profile in an inverted title
-bar and its 3×4 keymap, while all 12 NeoPixels change to the profile color. The
-firmware appears to macOS as a standard USB keyboard and media controller; it
-does not require a desktop helper.
+`Control+Right` clockwise. While held, the OLED replaces the keymap with a screen
+showing two large left and right arrows; releasing the encoder restores the same
+selected profile. The OLED normally shows the active profile in an inverted
+title bar and its 3×4 keymap, while all 12 NeoPixels change to the profile color.
+The firmware appears to macOS as a standard USB keyboard and media controller;
+it does not require a desktop helper.
 
 ## Profiles
 

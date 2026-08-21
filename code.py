@@ -1,13 +1,18 @@
 """Profile-based AI firmware for the Adafruit MacroPad RP2040."""
 
+import board
+import displayio
 import time
+import vectorio
 
 from adafruit_macropad import MacroPad
 
 from config import (
     DOUBLE_TAP_GAP_SECONDS,
+    ENCODER_LEFT_ARROW_POINTS,
     ENCODER_PRESSED_LEFT_KEYS,
     ENCODER_PRESSED_RIGHT_KEYS,
+    ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -56,6 +61,11 @@ def set_profile(profile_index):
 
     display_lines.show()
     macropad.pixels.fill(profile["color"])
+
+
+def show_encoder_navigation():
+    """Replace the OLED keymap with large left and right arrows."""
+    board.DISPLAY.root_group = encoder_navigation_group
 
 
 def tap_hotkey(names):
@@ -150,15 +160,43 @@ macropad.pixels.brightness = PIXEL_BRIGHTNESS
 display_lines = macropad.display_text()
 display_lines[0].color = 0x000000
 display_lines[0].background_color = 0xFFFFFF
+encoder_navigation_palette = displayio.Palette(1)
+encoder_navigation_palette[0] = 0xFFFFFF
+encoder_navigation_group = displayio.Group()
+encoder_navigation_group.append(
+    vectorio.Polygon(
+        pixel_shader=encoder_navigation_palette,
+        points=list(ENCODER_LEFT_ARROW_POINTS),
+        x=0,
+        y=0,
+    )
+)
+encoder_navigation_group.append(
+    vectorio.Polygon(
+        pixel_shader=encoder_navigation_palette,
+        points=list(ENCODER_RIGHT_ARROW_POINTS),
+        x=0,
+        y=0,
+    )
+)
 held_keycodes = {}
 pending_long_presses = {}
 active_mode_indicators = {}
 active_profile = 0
+encoder_navigation_active = False
 last_encoder_position = macropad.encoder
 last_pulse_update = 0.0
 set_profile(active_profile)
 
 while True:
+    macropad.encoder_switch_debounced.update()
+    if macropad.encoder_switch_debounced.pressed:
+        encoder_navigation_active = True
+        show_encoder_navigation()
+    elif macropad.encoder_switch_debounced.released:
+        encoder_navigation_active = False
+        set_profile(active_profile)
+
     key_event = macropad.keys.events.get()
     if key_event:
         if key_event.pressed:
@@ -176,7 +214,7 @@ while True:
         held_keycodes.clear()
         pending_long_presses.clear()
         last_encoder_position = encoder_position
-        if macropad.encoder_switch:
+        if encoder_navigation_active:
             send_encoder_navigation(encoder_delta)
         else:
             active_profile = (active_profile + encoder_delta) % len(PROFILES)
