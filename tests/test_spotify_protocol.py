@@ -14,13 +14,16 @@ from spotify_protocol import (
 
 class SpotifyProtocolTests(unittest.TestCase):
     def test_round_trip_playing_message(self):
-        message = build_message("playing", "Easier To Run", "Linkin Park", 155, 204)
+        message = build_message(
+            "playing", "Easier To Run", "Linkin Park", 155, 204, "Meteora"
+        )
         self.assertEqual(
             parse_message(message),
             {
                 "state": "playing",
                 "title": "Easier To Run",
                 "artist": "Linkin Park",
+                "album": "Meteora",
                 "position": 155,
                 "duration": 204,
             },
@@ -31,7 +34,9 @@ class SpotifyProtocolTests(unittest.TestCase):
 
     def test_paused_and_stopped_do_not_replace_media_keymap(self):
         self.assertIsNone(playback_display_rows(parse_message("SPOTIFY\tstopped\n")))
-        paused = parse_message(build_message("paused", "Song", "Artist", 1, 2))
+        paused = parse_message(
+            build_message("paused", "Song", "Artist", 1, 2, "Album")
+        )
         self.assertIsNone(playback_display_rows(paused))
 
     def test_playing_rows_fit_oled(self):
@@ -42,10 +47,13 @@ class SpotifyProtocolTests(unittest.TestCase):
                 "A very long artist name",
                 65,
                 245,
+                "An album with a very long name",
             )
         )
         rows = playback_display_rows(playback)
-        self.assertEqual(rows[0], "NOW PLAYING")
+        self.assertEqual(rows[0], "A very long artist na")
+        self.assertEqual(rows[1], "An album with a very ")
+        self.assertEqual(rows[2], "A title that is much ")
         self.assertEqual(rows[3], "1:05 / 4:05")
         self.assertTrue(all(len(row) <= 21 for row in rows))
 
@@ -62,7 +70,9 @@ class SpotifyProtocolTests(unittest.TestCase):
     def test_malformed_messages_are_ignored(self):
         self.assertIsNone(parse_message("hello"))
         self.assertIsNone(parse_message("SPOTIFY\tplaying\tmissing"))
-        self.assertIsNone(parse_message("SPOTIFY\tplaying\tSong\tArtist\tbad\t10"))
+        self.assertIsNone(
+            parse_message("SPOTIFY\tplaying\tSong\tArtist\tAlbum\tbad\t10")
+        )
 
 
 if __name__ == "__main__":

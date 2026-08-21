@@ -27,6 +27,7 @@ if (!spotify.running()) {
       state: state,
       title: String(track.name()),
       artist: String(track.artist()),
+      album: String(track.album()),
       duration: Number(track.duration()),
       position: Number(spotify.playerPosition())
     };
@@ -98,6 +99,7 @@ def relay(port_name=None, interval=1.0):
                 playback.get("artist", ""),
                 playback.get("position", 0),
                 playback.get("duration", 0),
+                playback.get("album", ""),
             )
             connection.write(message.encode("ascii"))
             connection.flush()

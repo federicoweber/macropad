@@ -14,7 +14,9 @@ def clean_field(value):
     )
 
 
-def build_message(state, title="", artist="", position=0, duration=0):
+def build_message(
+    state, title="", artist="", position=0, duration=0, album=""
+):
     """Build one newline-delimited playback update."""
     fields = [PREFIX, clean_field(state)]
     if state in ("playing", "paused"):
@@ -22,6 +24,7 @@ def build_message(state, title="", artist="", position=0, duration=0):
             (
                 clean_field(title),
                 clean_field(artist),
+                clean_field(album),
                 str(max(0, int(position))),
                 str(max(0, int(duration))),
             )
@@ -43,15 +46,16 @@ def parse_message(line):
             "state": state,
             "title": "",
             "artist": "",
+            "album": "",
             "position": 0,
             "duration": 0,
         }
-    if len(fields) != 6:
+    if len(fields) != 7:
         return None
 
     try:
-        position = max(0, int(fields[4]))
-        duration = max(0, int(fields[5]))
+        position = max(0, int(fields[5]))
+        duration = max(0, int(fields[6]))
     except ValueError:
         return None
 
@@ -59,6 +63,7 @@ def parse_message(line):
         "state": state,
         "title": fields[2],
         "artist": fields[3],
+        "album": fields[4],
         "position": position,
         "duration": duration,
     }
@@ -81,14 +86,15 @@ def playback_display_rows(playback):
 
     title = playback.get("title") or "Unknown track"
     artist = playback.get("artist") or "Unknown artist"
+    album = playback.get("album") or "Unknown album"
     progress = "{} / {}".format(
         format_time(playback.get("position", 0)),
         format_time(playback.get("duration", 0)),
     )
     return (
-        "NOW PLAYING",
-        title[:DISPLAY_WIDTH],
         artist[:DISPLAY_WIDTH],
+        album[:DISPLAY_WIDTH],
+        title[:DISPLAY_WIDTH],
         progress[:DISPLAY_WIDTH],
     )
 
