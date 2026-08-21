@@ -40,7 +40,7 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(PULSE_PERIOD_SECONDS, 4.0)
 
     def test_media_visualizer_uses_reduced_gain(self):
-        self.assertEqual(MEDIA_VISUALIZER_GAIN, 0.65)
+        self.assertEqual(MEDIA_VISUALIZER_GAIN, 0.80)
 
     def test_media_visualizer_transitions_from_green_to_red(self):
         self.assertEqual(MEDIA_VISUALIZER_ROW_COLORS[-1], (0, 255, 48))
