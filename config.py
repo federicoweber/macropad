@@ -20,6 +20,15 @@ def tap_or_long_hotkey(label, tap_keys, long_keys):
     }
 
 
+def enter_key():
+    """Create the shared Enter key used by non-music profiles."""
+    return tap_or_long_hotkey(
+        "ENTER",
+        ("ENTER",),
+        ("COMMAND", "ENTER"),
+    )
+
+
 def consumer(label, code):
     """Create a USB consumer-control binding."""
     return {"label": label, "action": "consumer", "code": code}
@@ -66,11 +75,7 @@ PROFILES = (
                 "keys": ("ESCAPE",),
                 "mode_clear": ("flow_free",),
             },
-            tap_or_long_hotkey(
-                "ENTER",
-                ("ENTER",),
-                ("COMMAND", "ENTER"),
-            ),
+            enter_key(),
             hotkey("COPY", "COMMAND", "CONTROL", "C"),
             hotkey("PASTE", "COMMAND", "CONTROL", "V"),
         ) + navigation_pad(),
@@ -92,8 +97,8 @@ PROFILES = (
                 "keys": ("ESCAPE",),
                 "mode_clear": ("codex_voice",),
             },
+            enter_key(),
             hotkey("CMD", "COMMAND", "SHIFT", "P"),
-            hotkey("NEW", "COMMAND", "N"),
             hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
         ) + navigation_pad(),
     },
@@ -105,7 +110,7 @@ PROFILES = (
             hotkey("QUICK", "OPTION", "T"),
             hotkey("FOCUS", "OPTION", "SHIFT", "T"),
             hotkey("ESC", "ESCAPE"),
-            hotkey("HOME", "OPTION", "H"),
+            enter_key(),
             hotkey("SECT", "OPTION", "S"),
             hotkey("FULL", "OPTION", "F"),
         ) + navigation_pad(),

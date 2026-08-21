@@ -5,9 +5,9 @@ Kit](https://www.adafruit.com/product/5128), designed for an AI-heavy macOS
 workflow.
 
 Turn the encoder to switch between W. Flow, Codex, Town, and Music. The OLED shows
-the active profile and its 3×4 keymap, while all 12 NeoPixels change to the
-profile color. The firmware appears to macOS as a standard USB keyboard and
-media controller; it does not require a desktop helper.
+the active profile in an inverted title bar and its 3×4 keymap, while all 12
+NeoPixels change to the profile color. The firmware appears to macOS as a
+standard USB keyboard and media controller; it does not require a desktop helper.
 
 ## Profiles
 
@@ -33,6 +33,7 @@ encoder switches profiles.
 `PTT` holds `Option+W`, matching the user-configured Flow shortcut. `FREE`
 double-taps the same shortcut, which Flow interprets as hands-free mode. A quick
 press on `ENTER` sends `Enter`; holding it for 0.5 seconds sends `Command+Enter`.
+This Enter behavior is shared by W. Flow, Codex, and Town.
 
 The remaining shortcuts use Flow's current native bindings:
 
@@ -46,14 +47,14 @@ The remaining shortcuts use Flow's current native bindings:
 | Left | Middle | Right |
 |------|--------|-------|
 | `FOCUS` Switch to Codex | `VOICE` Voice Mode | `ESC` Dismiss |
-| `CMD` Command menu | `NEW` New chat | `TERM` Terminal |
+| `ENTER` Submit | `CMD` Command menu | `TERM` Terminal |
 | `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `VOICE` sends `Option+C`, matching the user-verified Codex Voice Mode shortcut.
 `FOCUS` sends `Control+3` to switch the desktop app to Codex. The command menu,
-new chat, terminal, and back/forward actions use Codex's native shortcuts. The
-final two rows provide the shared navigation pad.
+terminal, and back/forward actions use Codex's native shortcuts. The final two
+rows provide the shared navigation pad.
 
 Because the MacroPad cannot read app state from macOS, the pulse tracks button
 presses rather than querying W. Flow or Codex. If a mode is stopped elsewhere,
@@ -64,13 +65,12 @@ press its mode button or `ESC` once to synchronize the indicator.
 | Left | Middle | Right |
 |------|--------|-------|
 | `QUICK` Quick Town | `FOCUS` Focus Town window | `ESC` Dismiss |
-| `HOME` Home | `SECT` Capture selection | `FULL` Capture full screen |
+| `ENTER` Select | `SECT` Capture selection | `FULL` Capture full screen |
 | `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
-`QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `HOME` sends `Option+H`,
-`SECT` sends `Option+S`, and `FULL` sends `Option+F`. The final two rows form a
-navigation D-pad.
+`QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `SECT` sends `Option+S`,
+and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
 ### 4. Music — green
 

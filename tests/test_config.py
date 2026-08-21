@@ -49,14 +49,21 @@ class ProfileTests(unittest.TestCase):
                 expected_keys,
             )
 
+    def test_non_music_profiles_share_enter_position(self):
+        for profile in PROFILES[:3]:
+            enter = profile["keys"][3]
+            self.assertEqual(enter["label"], "ENTER")
+            self.assertEqual(enter["action"], "tap_or_long_hotkey")
+            self.assertEqual(enter["tap_keys"], ("ENTER",))
+            self.assertEqual(enter["long_keys"], ("COMMAND", "ENTER"))
+
     def test_town_native_global_shortcuts(self):
         town = PROFILES[2]["keys"]
         self.assertEqual(
             [binding["label"] for binding in town[:6]],
-            ["QUICK", "FOCUS", "ESC", "HOME", "SECT", "FULL"],
+            ["QUICK", "FOCUS", "ESC", "ENTER", "SECT", "FULL"],
         )
         self.assertEqual(town[1]["keys"], ("OPTION", "SHIFT", "T"))
-        self.assertEqual(town[3]["keys"], ("OPTION", "H"))
         self.assertEqual(town[4]["keys"], ("OPTION", "S"))
         self.assertEqual(town[5]["keys"], ("OPTION", "F"))
 
@@ -96,15 +103,14 @@ class ProfileTests(unittest.TestCase):
             [binding["label"] for binding in codex],
             [
                 "FOCUS", "VOICE", "ESC",
-                "CMD", "NEW", "TERM",
+                "ENTER", "CMD", "TERM",
                 "BACK", "UP", "FWD",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
         self.assertEqual(codex[0]["keys"], ("CONTROL", "THREE"))
         self.assertEqual(codex[1]["keys"], ("OPTION", "C"))
-        self.assertEqual(codex[3]["keys"], ("COMMAND", "SHIFT", "P"))
-        self.assertEqual(codex[4]["keys"], ("COMMAND", "N"))
+        self.assertEqual(codex[4]["keys"], ("COMMAND", "SHIFT", "P"))
         self.assertEqual(codex[5]["keys"], ("CONTROL", "GRAVE_ACCENT"))
         self.assertEqual(codex[7]["keys"], ("UP_ARROW",))
 

@@ -40,9 +40,10 @@ def brighten(color):
 def set_profile(profile_index):
     """Update the OLED and LEDs for the selected profile."""
     profile = PROFILES[profile_index]
-    display_lines[0].text = "{}/{}  {}".format(
+    title = "{}/{}  {}".format(
         profile_index + 1, len(PROFILES), profile["name"]
     )
+    display_lines[0].text = "{:<21}".format(title)
 
     for row in range(4):
         first = row * 3
@@ -138,6 +139,8 @@ if configuration_errors:
 
 macropad.pixels.brightness = PIXEL_BRIGHTNESS
 display_lines = macropad.display_text()
+display_lines[0].color = 0x000000
+display_lines[0].background_color = 0xFFFFFF
 held_keycodes = {}
 pending_long_presses = {}
 active_mode_indicators = {}
