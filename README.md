@@ -4,7 +4,7 @@ Profile-based CircuitPython firmware for the [Adafruit MacroPad RP2040 Starter
 Kit](https://www.adafruit.com/product/5128), designed for an AI-heavy macOS
 workflow.
 
-Turn the encoder to switch between W. Flow, Codex, Town, and Media. The OLED shows
+Turn the encoder to switch between Wispr Flow, Codex, Town, and Media. The OLED shows
 the active profile in an inverted title bar and its 3×4 keymap, while all 12
 NeoPixels change to the profile color. The firmware appears to macOS as a
 standard USB keyboard and media controller; it does not require a desktop helper.
@@ -13,15 +13,15 @@ standard USB keyboard and media controller; it does not require a desktop helper
 
 Hold the board upright with the OLED and encoder above the keys.
 
-The bottom two rows are a shared navigation pad in W. Flow, Codex, and Town.
+The bottom two rows are a shared navigation pad in Wispr Flow, Codex, and Town.
 Media keeps its dedicated controls.
 
-The full key backlight smoothly pulses while W. Flow hands-free mode or Codex
+The full key backlight smoothly pulses while Wispr Flow hands-free mode or Codex
 Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
 press that profile's `ESC` to clear it. The indicator remains visible when the
 encoder switches profiles.
 
-### 1. W. Flow — purple
+### 1. Wispr Flow — purple
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -33,7 +33,7 @@ encoder switches profiles.
 `PTT` holds `Option+W`, matching the user-configured Flow shortcut. `FREE`
 double-taps the same shortcut, which Flow interprets as hands-free mode. A quick
 press on `ENTER` sends `Enter`; holding it for 0.5 seconds sends `Command+Enter`.
-This Enter behavior is shared by W. Flow, Codex, and Town.
+This Enter behavior is shared by Wispr Flow, Codex, and Town.
 
 The remaining shortcuts use Flow's current native bindings:
 
@@ -57,7 +57,7 @@ terminal, and back/forward actions use Codex's native shortcuts. The final two
 rows provide the shared navigation pad.
 
 Because the MacroPad cannot read app state from macOS, the pulse tracks button
-presses rather than querying W. Flow or Codex. If a mode is stopped elsewhere,
+presses rather than querying Wispr Flow or Codex. If a mode is stopped elsewhere,
 press its mode button or `ESC` once to synchronize the indicator.
 
 ### 3. Town — orange

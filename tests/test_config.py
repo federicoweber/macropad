@@ -12,7 +12,7 @@ class ProfileTests(unittest.TestCase):
     def test_expected_profiles_exist(self):
         self.assertEqual(
             [profile["name"] for profile in PROFILES],
-            ["W. Flow", "CODEX", "TOWN", "MEDIA"],
+            ["Wispr Flow", "CODEX", "TOWN", "MEDIA"],
         )
 
     def test_every_profile_matches_physical_board(self):
