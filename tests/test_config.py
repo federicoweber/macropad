@@ -69,7 +69,7 @@ class ProfileTests(unittest.TestCase):
             ],
         )
         self.assertEqual(codex[0]["keys"], ("COMMAND", "SHIFT", "P"))
-        self.assertEqual(codex[1]["keys"], ("CONTROL", "SHIFT", "D"))
+        self.assertEqual(codex[1]["keys"], ("OPTION", "C"))
         self.assertEqual(codex[3]["keys"], ("COMMAND", "LEFT_BRACKET"))
         self.assertEqual(codex[4]["keys"], ("COMMAND", "RIGHT_BRACKET"))
         self.assertEqual(codex[6]["keys"], ("COMMAND", "N"))

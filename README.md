@@ -44,9 +44,10 @@ The remaining shortcuts use Flow's current native bindings:
 | `NEW` New chat | `UP` Up | `TERM` Terminal |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
-These use the native shortcuts documented for the current ChatGPT/Codex desktop
-app, including `Control+Shift+D` for dictation, `Command+N` for a new chat, and
-`Control+\`` for the terminal. The final two rows also provide arrow navigation.
+`VOICE` sends `Option+C`, matching the user-verified Codex Voice Mode shortcut.
+The other app actions use native Codex shortcuts, including `Command+N` for a
+new chat and `Control+\`` for the terminal. The final two rows also provide arrow
+navigation.
 
 ### 3. Town — orange
 

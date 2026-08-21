@@ -54,7 +54,7 @@ PROFILES = (
         "color": (0, 174, 239),
         "keys": (
             hotkey("CMD", "COMMAND", "SHIFT", "P"),
-            hotkey("VOICE", "CONTROL", "SHIFT", "D"),
+            hotkey("VOICE", "OPTION", "C"),
             hotkey("ESC", "ESCAPE"),
             hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
             hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
