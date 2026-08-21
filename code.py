@@ -16,6 +16,7 @@ from config import (
     ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
     MEDIA_VISUALIZER_GAIN,
+    MEDIA_VISUALIZER_ROW_COLORS,
     MEDIA_SCROLL_UPDATE_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -262,12 +263,13 @@ def service_mode_indicator(last_update):
         levels = spotify_audio_levels
         if now - last_spotify_level_update > SPOTIFY_LEVEL_STALE_SECONDS:
             levels = (0.0, 0.0, 0.0)
-        color = PROFILES[active_profile]["color"]
-        unlit_color = dim(color, 0.06)
         for index, illuminated in enumerate(
             equalizer_pixels(levels, MEDIA_VISUALIZER_GAIN)
         ):
-            macropad.pixels[index] = color if illuminated else unlit_color
+            row_color = MEDIA_VISUALIZER_ROW_COLORS[index // 3]
+            macropad.pixels[index] = (
+                row_color if illuminated else dim(row_color, 0.06)
+            )
     elif active_mode_indicators or held_pulse_indicators:
         phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS
         triangle = 1.0 - abs((phase * 2.0) - 1.0)
