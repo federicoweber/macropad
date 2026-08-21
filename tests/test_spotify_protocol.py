@@ -42,6 +42,11 @@ class SpotifyProtocolTests(unittest.TestCase):
             ),
         )
 
+    def test_equalizer_gain_reduces_saturation(self):
+        full_gain = equalizer_pixels((0.7, 0.7, 0.7))
+        reduced_gain = equalizer_pixels((0.7, 0.7, 0.7), 0.65)
+        self.assertGreater(sum(full_gain), sum(reduced_gain))
+
     def test_playback_pause_controller_handles_overlapping_modes(self):
         controller = PlaybackPauseController()
         self.assertTrue(controller.begin("flow_free", True))

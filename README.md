@@ -53,7 +53,7 @@ The remaining shortcuts use Flow's current native bindings:
 - Submit: `Enter` (tap) or `Command+Enter` (long press)
 - Hub back/forward: `Command+[` / `Command+]`
 
-### 2. CODEX — white
+### 2. CODEX — blue
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -83,7 +83,7 @@ press its mode button or `ESC` once to synchronize the indicator.
 `QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `SECT` sends `Option+S`,
 and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
-### 4. MEDIA — orange
+### 4. MEDIA — white
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -101,9 +101,10 @@ paused, stopped, or unavailable, the keymap remains visible. In the keymap
 view, the center transport label changes to `PAUSE` while Spotify is playing
 and returns to `PLAY` otherwise.
 
-While Spotify is playing and Media is selected, the 3×4 orange key grid becomes
+While Spotify is playing and Media is selected, the 3×4 white key grid becomes
 a three-band visualizer. The columns represent bass, mid, and treble, and each
 four-spot bar grows upward from the bottom in time with Spotify's actual audio.
+The default reduced gain keeps typical tracks from saturating the full columns.
 
 Automatic pausing starts unlinked after boot, so the button initially shows
 `LINK`. Press it to enable the behavior; the label changes to `UNLNK`, which

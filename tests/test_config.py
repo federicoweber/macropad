@@ -7,6 +7,7 @@ from config import (
     ENCODER_PRESSED_LEFT_KEYS,
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
+    MEDIA_VISUALIZER_GAIN,
     PROFILES,
     PULSE_PERIOD_SECONDS,
     validate_profiles,
@@ -28,14 +29,17 @@ class ProfileTests(unittest.TestCase):
             [profile["color"] for profile in PROFILES],
             [
                 (132, 62, 255),
-                (255, 255, 255),
+                (0, 110, 255),
                 (0, 190, 120),
-                (255, 80, 0),
+                (255, 255, 255),
             ],
         )
 
     def test_conversation_pulse_uses_slow_cycle(self):
         self.assertEqual(PULSE_PERIOD_SECONDS, 4.0)
+
+    def test_media_visualizer_uses_reduced_gain(self):
+        self.assertEqual(MEDIA_VISUALIZER_GAIN, 0.65)
 
     def test_every_profile_matches_physical_board(self):
         for profile in PROFILES:

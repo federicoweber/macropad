@@ -15,6 +15,7 @@ from config import (
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
+    MEDIA_VISUALIZER_GAIN,
     MEDIA_SCROLL_UPDATE_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -263,7 +264,9 @@ def service_mode_indicator(last_update):
             levels = (0.0, 0.0, 0.0)
         color = PROFILES[active_profile]["color"]
         unlit_color = dim(color, 0.06)
-        for index, illuminated in enumerate(equalizer_pixels(levels)):
+        for index, illuminated in enumerate(
+            equalizer_pixels(levels, MEDIA_VISUALIZER_GAIN)
+        ):
             macropad.pixels[index] = color if illuminated else unlit_color
     elif active_mode_indicators or held_pulse_indicators:
         phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS

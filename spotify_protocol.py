@@ -131,10 +131,10 @@ def parse_audio_level_message(line):
     return tuple(level / 255.0 for level in encoded_levels)
 
 
-def equalizer_pixels(levels):
+def equalizer_pixels(levels, gain=1.0):
     """Map three audio bands to bottom-up columns on the 3x4 key grid."""
     heights = tuple(
-        min(4, int(min(1.0, max(0.0, level)) * 6.0))
+        min(4, int(min(1.0, max(0.0, level * gain)) * 6.0))
         for level in levels
     )
     return tuple(

@@ -89,7 +89,7 @@ PROFILES = (
     },
     {
         "name": "CODEX",
-        "color": (255, 255, 255),
+        "color": (0, 110, 255),
         "keys": (
             hotkey("CMD", "COMMAND", "SHIFT", "P"),
             {
@@ -125,7 +125,7 @@ PROFILES = (
     },
     {
         "name": "MEDIA",
-        "color": (255, 80, 0),
+        "color": (255, 255, 255),
         "keys": (
             consumer("PREV", "SCAN_PREVIOUS_TRACK"),
             consumer("PLAY", "PLAY_PAUSE"),
@@ -152,6 +152,7 @@ PULSE_MIN_FACTOR = 0.25
 PULSE_UPDATE_SECONDS = 0.03
 SPOTIFY_STALE_SECONDS = 5.0
 SPOTIFY_LEVEL_STALE_SECONDS = 0.2
+MEDIA_VISUALIZER_GAIN = 0.65
 MEDIA_SCROLL_UPDATE_SECONDS = 0.25
 ENCODER_PRESSED_LEFT_KEYS = ("CONTROL", "LEFT_ARROW")
 ENCODER_PRESSED_RIGHT_KEYS = ("CONTROL", "RIGHT_ARROW")
