@@ -50,10 +50,10 @@ app, including `Command+Option+N` for quick chat and `Command+N` for a new chat.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `OPEN` Town spotlight | `SEND` Send | `LINE` New line |
-| `@` Mention | `ESC` Dismiss | `DEL` Delete mention |
-| `UP` Up | `DOWN` Down | `LEFT` Left |
-| `RGHT` Right | `----` Unused | `----` Unused |
+| `OPEN` Town spotlight | `SEND` Send | `ESC` Dismiss |
+| `@` Mention | `LINE` New line | `DEL` Delete mention |
+| `----` Unused | `UP` Up | `----` Unused |
+| `LEFT` Left | `DOWN` Down | `RGHT` Right |
 
 `OPEN` sends the user-configured `Option+T` global shortcut. The remaining keys
 use Town's native assistant composer and mention-autocomplete controls.

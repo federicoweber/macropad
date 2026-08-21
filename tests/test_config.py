@@ -27,6 +27,15 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(flow_ptt["keys"], ("OPTION", "W"))
         self.assertEqual(town_open["keys"], ("OPTION", "T"))
 
+    def test_town_navigation_forms_dpad(self):
+        town = PROFILES[2]["keys"]
+        self.assertEqual(town[2]["keys"], ("ESCAPE",))
+        self.assertEqual(town[7]["keys"], ("UP_ARROW",))
+        self.assertEqual(
+            [binding["keys"] for binding in town[9:12]],
+            [("LEFT_ARROW",), ("DOWN_ARROW",), ("RIGHT_ARROW",)],
+        )
+
     def test_flow_hands_free_double_taps_ptt(self):
         hands_free = PROFILES[0]["keys"][1]
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
