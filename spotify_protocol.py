@@ -2,7 +2,9 @@
 
 
 PREFIX = "SPOTIFY"
+HOST_COMMAND_PREFIX = "MACROPAD"
 DISPLAY_WIDTH = 21
+SCROLL_PAUSE_STEPS = 4
 
 
 def clean_field(value):
@@ -69,6 +71,19 @@ def parse_message(line):
     }
 
 
+def build_host_command(command):
+    """Build one MacroPad-to-host command."""
+    return "{}\t{}\n".format(HOST_COMMAND_PREFIX, clean_field(command))
+
+
+def parse_host_command(line):
+    """Parse one MacroPad-to-host command."""
+    fields = line.rstrip("\r\n").split("\t")
+    if len(fields) != 2 or fields[0] != HOST_COMMAND_PREFIX:
+        return None
+    return fields[1]
+
+
 def format_time(seconds):
     """Format a non-negative duration for the compact OLED."""
     seconds = max(0, int(seconds))
@@ -92,11 +107,30 @@ def playback_display_rows(playback):
         format_time(playback.get("duration", 0)),
     )
     return (
-        artist[:DISPLAY_WIDTH],
-        album[:DISPLAY_WIDTH],
-        title[:DISPLAY_WIDTH],
-        progress[:DISPLAY_WIDTH],
+        artist,
+        album,
+        title,
+        progress,
     )
+
+
+def scrolling_display_text(
+    text, step, width=DISPLAY_WIDTH, pause_steps=SCROLL_PAUSE_STEPS
+):
+    """Return one display-width window that advances through long text."""
+    if len(text) <= width:
+        return text + (" " * (width - len(text)))
+
+    last_offset = len(text) - width
+    cycle_steps = pause_steps + last_offset + pause_steps
+    phase = step % cycle_steps
+    if phase < pause_steps:
+        offset = 0
+    elif phase < pause_steps + last_offset:
+        offset = phase - pause_steps + 1
+    else:
+        offset = last_offset
+    return text[offset:offset + width]
 
 
 def transport_label(playback):

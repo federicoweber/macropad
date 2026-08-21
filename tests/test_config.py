@@ -161,7 +161,7 @@ class ProfileTests(unittest.TestCase):
             [
                 "PREV", "PLAY", "NEXT",
                 "VOL-", "MUTE", "VOL+",
-                "INFO", "UP", "----",
+                "FOCUS", "UP", "INFO",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
@@ -173,9 +173,9 @@ class ProfileTests(unittest.TestCase):
             [binding["code"] for binding in media[3:6]],
             ["VOLUME_DECREMENT", "MUTE", "VOLUME_INCREMENT"],
         )
-        self.assertEqual(media[6]["action"], "toggle_media_display")
+        self.assertEqual(media[6]["action"], "focus_spotify")
         self.assertEqual(media[7]["keys"], ("UP_ARROW",))
-        self.assertEqual(media[8]["action"], "noop")
+        self.assertEqual(media[8]["action"], "toggle_media_display")
         self.assertEqual(media[9]["keys"], ("LEFT_ARROW",))
         self.assertEqual(media[10]["keys"], ("DOWN_ARROW",))
         self.assertEqual(media[11]["keys"], ("RIGHT_ARROW",))

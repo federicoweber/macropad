@@ -15,6 +15,7 @@ from config import (
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
+    MEDIA_SCROLL_UPDATE_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
     PROFILES,
@@ -24,7 +25,14 @@ from config import (
     SPOTIFY_STALE_SECONDS,
     validate_profiles,
 )
-from spotify_protocol import parse_message, playback_display_rows, transport_label
+from spotify_protocol import (
+    DISPLAY_WIDTH,
+    build_host_command,
+    parse_message,
+    playback_display_rows,
+    scrolling_display_text,
+    transport_label,
+)
 
 
 macropad = MacroPad()
@@ -61,7 +69,9 @@ def set_profile(profile_index):
 
     if playback_rows:
         for row, text in enumerate(playback_rows):
-            display_lines[row + 1].text = "{:<21}".format(text)
+            display_lines[row + 1].text = scrolling_display_text(
+                text, media_scroll_step
+            )
     else:
         for row in range(4):
             first = row * 3
@@ -98,7 +108,7 @@ def send_encoder_navigation(delta):
 
 def press_key(index):
     """Run the active profile's configured press action."""
-    global media_info_enabled
+    global media_info_enabled, media_scroll_step
 
     binding = PROFILES[active_profile]["keys"][index]
     action = binding["action"]
@@ -121,8 +131,15 @@ def press_key(index):
         macropad.consumer_control.send(code)
     elif action == "type_text":
         macropad.keyboard_layout.write(binding["text"])
+    elif action == "focus_spotify":
+        if spotify_serial is not None:
+            spotify_serial.write(
+                build_host_command("FOCUS_SPOTIFY").encode("ascii")
+            )
     elif action == "toggle_media_display":
         media_info_enabled = not media_info_enabled
+        if media_info_enabled:
+            media_scroll_step = 0
         set_profile(active_profile)
 
     mode_toggle = binding.get("mode_toggle")
@@ -175,11 +192,25 @@ def service_mode_indicator(last_update):
 
 def apply_spotify_message(line):
     """Update cached playback state from one complete relay message."""
-    global last_spotify_update, spotify_playback
+    global last_spotify_update, media_scroll_step, spotify_playback
 
     playback = parse_message(line)
     if playback is None:
         return
+    previous_track = None
+    if spotify_playback:
+        previous_track = (
+            spotify_playback.get("artist"),
+            spotify_playback.get("album"),
+            spotify_playback.get("title"),
+        )
+    current_track = (
+        playback.get("artist"),
+        playback.get("album"),
+        playback.get("title"),
+    )
+    if current_track != previous_track:
+        media_scroll_step = 0
     spotify_playback = playback
     last_spotify_update = time.monotonic()
     if PROFILES[active_profile]["name"] == "MEDIA" and not encoder_navigation_active:
@@ -206,6 +237,30 @@ def service_spotify_serial():
         spotify_playback = None
         if PROFILES[active_profile]["name"] == "MEDIA" and not encoder_navigation_active:
             set_profile(active_profile)
+
+
+def service_media_scroll(last_update):
+    """Advance overflowing Spotify rows without blocking key input."""
+    global media_scroll_step
+
+    now = time.monotonic()
+    if now - last_update < MEDIA_SCROLL_UPDATE_SECONDS:
+        return last_update
+    if (
+        PROFILES[active_profile]["name"] != "MEDIA"
+        or not media_info_enabled
+        or encoder_navigation_active
+    ):
+        return now
+
+    playback_rows = playback_display_rows(spotify_playback)
+    if playback_rows and any(len(text) > DISPLAY_WIDTH for text in playback_rows):
+        media_scroll_step += 1
+        for row, text in enumerate(playback_rows):
+            display_lines[row + 1].text = scrolling_display_text(
+                text, media_scroll_step
+            )
+    return now
 
 
 configuration_errors = validate_profiles()
@@ -243,10 +298,12 @@ spotify_serial = usb_cdc.data
 spotify_serial_buffer = ""
 last_spotify_update = 0.0
 media_info_enabled = True
+media_scroll_step = 0
 active_profile = 0
 encoder_navigation_active = False
 last_encoder_position = macropad.encoder
 last_pulse_update = 0.0
+last_media_scroll_update = 0.0
 set_profile(active_profile)
 
 while True:
@@ -268,6 +325,7 @@ while True:
     service_long_presses()
     last_pulse_update = service_mode_indicator(last_pulse_update)
     service_spotify_serial()
+    last_media_scroll_update = service_media_scroll(last_media_scroll_update)
 
     encoder_position = macropad.encoder
     encoder_delta = encoder_position - last_encoder_position

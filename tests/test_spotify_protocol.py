@@ -3,11 +3,14 @@
 import unittest
 
 from spotify_protocol import (
+    build_host_command,
     build_message,
     clean_field,
     format_time,
     parse_message,
     playback_display_rows,
+    parse_host_command,
+    scrolling_display_text,
     transport_label,
 )
 
@@ -39,7 +42,7 @@ class SpotifyProtocolTests(unittest.TestCase):
         )
         self.assertIsNone(playback_display_rows(paused))
 
-    def test_playing_rows_fit_oled(self):
+    def test_playing_rows_use_requested_order(self):
         playback = parse_message(
             build_message(
                 "playing",
@@ -51,11 +54,18 @@ class SpotifyProtocolTests(unittest.TestCase):
             )
         )
         rows = playback_display_rows(playback)
-        self.assertEqual(rows[0], "A very long artist na")
-        self.assertEqual(rows[1], "An album with a very ")
-        self.assertEqual(rows[2], "A title that is much ")
+        self.assertEqual(rows[0], "A very long artist name")
+        self.assertEqual(rows[1], "An album with a very long name")
+        self.assertEqual(rows[2], "A title that is much longer than the OLED")
         self.assertEqual(rows[3], "1:05 / 4:05")
-        self.assertTrue(all(len(row) <= 21 for row in rows))
+
+    def test_long_display_text_scrolls_toward_the_end(self):
+        text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.assertEqual(scrolling_display_text(text, 0), "ABCDEFGHIJKLMNOPQRSTU")
+        self.assertEqual(scrolling_display_text(text, 4), "BCDEFGHIJKLMNOPQRSTUV")
+        self.assertEqual(scrolling_display_text(text, 8), "FGHIJKLMNOPQRSTUVWXYZ")
+        self.assertEqual(scrolling_display_text(text, 13), "ABCDEFGHIJKLMNOPQRSTU")
+        self.assertEqual(scrolling_display_text("Short", 99), "Short                ")
 
     def test_time_format(self):
         self.assertEqual(format_time(65), "1:05")
@@ -66,6 +76,12 @@ class SpotifyProtocolTests(unittest.TestCase):
         self.assertEqual(transport_label({"state": "stopped"}), "PLAY")
         self.assertEqual(transport_label({"state": "paused"}), "PLAY")
         self.assertEqual(transport_label({"state": "playing"}), "PAUSE")
+
+    def test_host_command_round_trip(self):
+        message = build_host_command("FOCUS_SPOTIFY")
+        self.assertEqual(message, "MACROPAD\tFOCUS_SPOTIFY\n")
+        self.assertEqual(parse_host_command(message), "FOCUS_SPOTIFY")
+        self.assertIsNone(parse_host_command("SPOTIFY\tFOCUS_SPOTIFY\n"))
 
     def test_malformed_messages_are_ignored(self):
         self.assertIsNone(parse_message("hello"))

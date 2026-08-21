@@ -125,9 +125,9 @@ PROFILES = (
             consumer("VOL-", "VOLUME_DECREMENT"),
             consumer("MUTE", "MUTE"),
             consumer("VOL+", "VOLUME_INCREMENT"),
-            {"label": "INFO", "action": "toggle_media_display"},
+            {"label": "FOCUS", "action": "focus_spotify"},
             hotkey("UP", "UP_ARROW"),
-            unused(),
+            {"label": "INFO", "action": "toggle_media_display"},
             hotkey("LEFT", "LEFT_ARROW"),
             hotkey("DOWN", "DOWN_ARROW"),
             hotkey("RIGHT", "RIGHT_ARROW"),
@@ -143,6 +143,7 @@ PULSE_PERIOD_SECONDS = 1.5
 PULSE_MIN_FACTOR = 0.25
 PULSE_UPDATE_SECONDS = 0.03
 SPOTIFY_STALE_SECONDS = 5.0
+MEDIA_SCROLL_UPDATE_SECONDS = 0.25
 ENCODER_PRESSED_LEFT_KEYS = ("CONTROL", "LEFT_ARROW")
 ENCODER_PRESSED_RIGHT_KEYS = ("CONTROL", "RIGHT_ARROW")
 ENCODER_LEFT_ARROW_POINTS = (
@@ -165,6 +166,7 @@ def validate_profiles(profiles=PROFILES):
         "double_tap_hotkey",
         "consumer",
         "type_text",
+        "focus_spotify",
         "toggle_media_display",
         "noop",
     )

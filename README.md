@@ -83,15 +83,20 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 |------|--------|-------|
 | `PREV` Previous | `PLAY`/`PAUSE` | `NEXT` Next |
 | `VOL-` Volume down | `MUTE` Mute | `VOL+` Volume up |
-| `INFO` Toggle OLED view | `UP` Up | `----` Unused |
+| `FOCUS` Show Spotify | `UP` Up | `INFO` Toggle OLED view |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 Media uses native USB consumer-control commands and works without app-specific
 configuration. While Spotify is playing, the OLED shows the artist, album,
-song, and elapsed/total playback time. Press `INFO` to toggle between that view and the
-Media keymap. If Spotify is paused, stopped, or unavailable, the keymap remains
-visible. In the keymap view, the center transport label changes to `PAUSE`
-while Spotify is playing and returns to `PLAY` otherwise.
+song, and elapsed/total playback time. Artist, album, and song lines that exceed
+the display width automatically scroll from their beginning to their end.
+Press `INFO` to toggle between that view and the Media keymap. If Spotify is
+paused, stopped, or unavailable, the keymap remains visible. In the keymap
+view, the center transport label changes to `PAUSE` while Spotify is playing
+and returns to `PLAY` otherwise.
+
+`FOCUS` asks the local relay to bring Spotify to the foreground. If Spotify is
+closed, macOS launches it first.
 
 ## Spotify now playing
 
@@ -165,6 +170,7 @@ Supported actions are:
 - `tap_or_long_hotkey`: send different chords for a tap and a long press
 - `consumer`: send a USB media-control code
 - `type_text`: type literal text
+- `focus_spotify`: ask the host relay to activate Spotify
 - `toggle_media_display`: switch the Media OLED between key and playback views
 - `noop`: intentionally leave a key unused
 
