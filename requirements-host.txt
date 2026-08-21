@@ -1,1 +1,2 @@
 circup>=3.0
+pyserial>=3.5

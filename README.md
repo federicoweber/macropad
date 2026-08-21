@@ -10,8 +10,9 @@ encoder down while turning it to send `Control+Left` counterclockwise or
 large navigation chevrons; releasing the encoder restores the same selected
 profile. The OLED normally shows the active profile in an inverted title bar
 and its 3×4 keymap, while all 12 NeoPixels change to the profile color. The
-firmware appears to macOS as a standard USB keyboard and media controller; it
-does not require a desktop helper.
+firmware appears to macOS as a standard USB keyboard and media controller.
+Keyboard and media controls need no desktop helper; Spotify metadata uses the
+optional local relay described below.
 
 ## Profiles
 
@@ -83,10 +84,38 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 | `PREV` Previous | `PLAY` Play/pause | `NEXT` Next |
 | `RW` Rewind | `STOP` Stop | `FF` Fast-forward |
 | `VOL-` Volume down | `MUTE` Mute | `VOL+` Volume up |
-| `DIM` Brightness down | `----` Unused | `BRIT` Brightness up |
+| `DIM` Brightness down | `INFO` Toggle OLED view | `BRIT` Brightness up |
 
 Media uses native USB consumer-control commands and works without app-specific
-configuration.
+configuration. While Spotify is playing, the OLED can show the current track,
+artist, and playback time. Press `INFO` to toggle between that view and the
+Media keymap. If Spotify is paused, stopped, or unavailable, the keymap remains
+visible.
+
+## Spotify now playing
+
+`spotify_relay.py` reads Spotify's native macOS playback metadata and sends it
+to the MacroPad over a second USB serial channel. It stays on the local machine
+and does not need Spotify API credentials or an OAuth login.
+
+After installing the host requirements and deploying the firmware, run the
+relay in a terminal:
+
+```sh
+.venv/bin/python spotify_relay.py
+```
+
+macOS may ask whether Python can control Spotify the first time. Allow that
+request so the relay can read the current track. To start the relay
+automatically at login, copy the included launch agent and load it:
+
+```sh
+cp launchd/com.federicoweber.ai-macropad-spotify.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.federicoweber.ai-macropad-spotify.plist
+```
+
+The launch agent paths assume this repository is located at
+`/Users/federico/fwd_projects/ai-macropad`.
 
 ## Install
 
@@ -135,6 +164,7 @@ Supported actions are:
 - `tap_or_long_hotkey`: send different chords for a tap and a long press
 - `consumer`: send a USB media-control code
 - `type_text`: type literal text
+- `toggle_media_display`: switch the Media OLED between key and playback views
 - `noop`: intentionally leave a key unused
 
 Run the host checks and deploy changes with:
@@ -147,11 +177,15 @@ make deploy
 ## Project structure
 
 ```text
+boot.py                 Enables the second USB serial channel
 code.py                 Profile switching and hardware event loop
 config.py               Profiles, key bindings, labels, and colors
+spotify_protocol.py     Shared compact metadata protocol
+spotify_relay.py        Local macOS Spotify-to-USB relay
+launchd/                Optional automatic relay startup
 requirements.txt        CircuitPython libraries installed on the board
-requirements-host.txt   Host deployment tools
-tests/                  Hardware-independent profile checks
+requirements-host.txt   Host deployment and relay tools
+tests/                  Hardware-independent checks
 ```
 
 ## References

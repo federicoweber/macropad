@@ -3,6 +3,7 @@
 import board
 import displayio
 import time
+import usb_cdc
 import vectorio
 
 from adafruit_macropad import MacroPad
@@ -20,8 +21,10 @@ from config import (
     PULSE_MIN_FACTOR,
     PULSE_PERIOD_SECONDS,
     PULSE_UPDATE_SECONDS,
+    SPOTIFY_STALE_SECONDS,
     validate_profiles,
 )
+from spotify_protocol import parse_message, playback_display_rows
 
 
 macropad = MacroPad()
@@ -52,12 +55,23 @@ def set_profile(profile_index):
     )
     display_lines[0].text = "{:<21}".format(title.upper())
 
-    for row in range(4):
-        first = row * 3
-        labels = [profile["keys"][first + column]["label"] for column in range(3)]
-        display_lines[row + 1].text = "{:<5} {:<5} {:<5}".format(
-            labels[0], labels[1], labels[2]
-        )
+    playback_rows = None
+    if profile["name"] == "MEDIA" and media_info_enabled:
+        playback_rows = playback_display_rows(spotify_playback)
+
+    if playback_rows:
+        for row, text in enumerate(playback_rows):
+            display_lines[row + 1].text = "{:<21}".format(text)
+    else:
+        for row in range(4):
+            first = row * 3
+            labels = [
+                profile["keys"][first + column]["label"]
+                for column in range(3)
+            ]
+            display_lines[row + 1].text = "{:<5} {:<5} {:<5}".format(
+                labels[0], labels[1], labels[2]
+            )
 
     display_lines.show()
     macropad.pixels.fill(profile["color"])
@@ -82,6 +96,8 @@ def send_encoder_navigation(delta):
 
 def press_key(index):
     """Run the active profile's configured press action."""
+    global media_info_enabled
+
     binding = PROFILES[active_profile]["keys"][index]
     action = binding["action"]
     macropad.pixels[index] = brighten(PROFILES[active_profile]["color"])
@@ -103,6 +119,9 @@ def press_key(index):
         macropad.consumer_control.send(code)
     elif action == "type_text":
         macropad.keyboard_layout.write(binding["text"])
+    elif action == "toggle_media_display":
+        media_info_enabled = not media_info_enabled
+        set_profile(active_profile)
 
     mode_toggle = binding.get("mode_toggle")
     if mode_toggle:
@@ -152,6 +171,41 @@ def service_mode_indicator(last_update):
     return now
 
 
+def apply_spotify_message(line):
+    """Update cached playback state from one complete relay message."""
+    global last_spotify_update, spotify_playback
+
+    playback = parse_message(line)
+    if playback is None:
+        return
+    spotify_playback = playback
+    last_spotify_update = time.monotonic()
+    if PROFILES[active_profile]["name"] == "MEDIA" and not encoder_navigation_active:
+        set_profile(active_profile)
+
+
+def service_spotify_serial():
+    """Consume pending metadata without blocking the key event loop."""
+    global spotify_playback, spotify_serial_buffer
+
+    if spotify_serial is not None and spotify_serial.in_waiting:
+        data = spotify_serial.read(spotify_serial.in_waiting)
+        if data:
+            spotify_serial_buffer += data.decode("ascii")
+            while "\n" in spotify_serial_buffer:
+                line, spotify_serial_buffer = spotify_serial_buffer.split("\n", 1)
+                apply_spotify_message(line)
+
+    if (
+        spotify_playback
+        and spotify_playback.get("state") == "playing"
+        and time.monotonic() - last_spotify_update > SPOTIFY_STALE_SECONDS
+    ):
+        spotify_playback = None
+        if PROFILES[active_profile]["name"] == "MEDIA" and not encoder_navigation_active:
+            set_profile(active_profile)
+
+
 configuration_errors = validate_profiles()
 if configuration_errors:
     raise ValueError("; ".join(configuration_errors))
@@ -182,6 +236,11 @@ encoder_navigation_group.append(
 held_keycodes = {}
 pending_long_presses = {}
 active_mode_indicators = {}
+spotify_playback = None
+spotify_serial = usb_cdc.data
+spotify_serial_buffer = ""
+last_spotify_update = 0.0
+media_info_enabled = True
 active_profile = 0
 encoder_navigation_active = False
 last_encoder_position = macropad.encoder
@@ -206,6 +265,7 @@ while True:
 
     service_long_presses()
     last_pulse_update = service_mode_indicator(last_pulse_update)
+    service_spotify_serial()
 
     encoder_position = macropad.encoder
     encoder_delta = encoder_position - last_encoder_position

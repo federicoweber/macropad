@@ -160,6 +160,8 @@ class ProfileTests(unittest.TestCase):
             [binding["code"] for binding in media[:3]],
             ["SCAN_PREVIOUS_TRACK", "PLAY_PAUSE", "SCAN_NEXT_TRACK"],
         )
+        self.assertEqual(media[10]["label"], "INFO")
+        self.assertEqual(media[10]["action"], "toggle_media_display")
 
     def test_validation_catches_wrong_key_count(self):
         invalid_profile = dict(PROFILES[0])
