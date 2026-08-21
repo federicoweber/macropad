@@ -62,12 +62,18 @@ PROFILES = (
         "color": (132, 62, 255),
         "keys": (
             # User-configured Flow push-to-talk shortcut.
-            hotkey("PTT", "OPTION", "W", hold=True),
+            {
+                "label": "PTT",
+                "action": "hold_hotkey",
+                "keys": ("OPTION", "W"),
+                "media_pause": "while_held",
+            },
             {
                 "label": "FREE",
                 "action": "double_tap_hotkey",
                 "keys": ("OPTION", "W"),
                 "mode_toggle": "flow_free",
+                "media_pause": "while_active",
             },
             {
                 "label": "ESC",
@@ -90,6 +96,7 @@ PROFILES = (
                 "action": "tap_hotkey",
                 "keys": ("OPTION", "C"),
                 "mode_toggle": "codex_voice",
+                "media_pause": "while_active",
             },
             {
                 "label": "ESC",
@@ -125,7 +132,7 @@ PROFILES = (
             consumer("VOL-", "VOLUME_DECREMENT"),
             consumer("MUTE", "MUTE"),
             consumer("VOL+", "VOLUME_INCREMENT"),
-            {"label": "FOCUS", "action": "focus_spotify"},
+            {"label": "UNLNK", "action": "toggle_auto_pause"},
             hotkey("UP", "UP_ARROW"),
             {"label": "INFO", "action": "toggle_media_display"},
             hotkey("LEFT", "LEFT_ARROW"),
@@ -166,7 +173,7 @@ def validate_profiles(profiles=PROFILES):
         "double_tap_hotkey",
         "consumer",
         "type_text",
-        "focus_spotify",
+        "toggle_auto_pause",
         "toggle_media_display",
         "noop",
     )

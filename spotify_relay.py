@@ -9,7 +9,7 @@ import time
 import serial
 from serial.tools import list_ports
 
-from spotify_protocol import build_message, parse_host_command
+from spotify_protocol import build_message
 
 
 SPOTIFY_JXA = r'''
@@ -85,39 +85,13 @@ def connect(port_name=None):
     raise last_error
 
 
-def activate_spotify():
-    """Bring Spotify forward, launching it when it is not running."""
-    subprocess.run(
-        ["/usr/bin/open", "-a", "Spotify"],
-        check=True,
-        timeout=5,
-    )
-
-
-def service_commands(connection, buffer):
-    """Run complete MacroPad commands received over the data port."""
-    if connection.in_waiting:
-        data = connection.read(connection.in_waiting)
-        buffer += data.decode("ascii", "ignore")
-
-    while "\n" in buffer:
-        line, buffer = buffer.split("\n", 1)
-        if parse_host_command(line) == "FOCUS_SPOTIFY":
-            activate_spotify()
-            print("Spotify relay: focused Spotify", flush=True)
-    return buffer
-
-
 def relay(port_name=None, interval=1.0):
     """Poll Spotify forever and reconnect automatically after USB changes."""
     connection = None
-    command_buffer = ""
     while True:
         try:
             if connection is None or not connection.is_open:
                 connection = connect(port_name)
-                command_buffer = ""
-            command_buffer = service_commands(connection, command_buffer)
             playback = read_spotify()
             message = build_message(
                 playback.get("state", "stopped"),

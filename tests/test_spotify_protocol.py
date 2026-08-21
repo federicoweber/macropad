@@ -3,20 +3,38 @@
 import unittest
 
 from spotify_protocol import (
-    build_host_command,
+    PlaybackPauseController,
     build_message,
     clean_field,
     format_time,
     parse_message,
     playback_is_active,
     playback_display_rows,
-    parse_host_command,
     scrolling_display_text,
     transport_label,
 )
 
 
 class SpotifyProtocolTests(unittest.TestCase):
+    def test_playback_pause_controller_handles_overlapping_modes(self):
+        controller = PlaybackPauseController()
+        self.assertTrue(controller.begin("flow_free", True))
+        self.assertFalse(controller.begin("ptt", True))
+        self.assertFalse(controller.end("flow_free"))
+        self.assertTrue(controller.end("ptt"))
+
+    def test_playback_pause_controller_does_not_resume_prepaused_music(self):
+        controller = PlaybackPauseController()
+        self.assertFalse(controller.begin("codex_voice", False))
+        self.assertFalse(controller.end("codex_voice"))
+
+    def test_playback_pause_controller_cancel_resumes_once(self):
+        controller = PlaybackPauseController()
+        self.assertTrue(controller.begin("flow_free", True))
+        self.assertTrue(controller.cancel())
+        self.assertFalse(controller.cancel())
+        self.assertFalse(controller.end("flow_free"))
+
     def test_round_trip_playing_message(self):
         message = build_message(
             "playing", "Easier To Run", "Linkin Park", 155, 204, "Meteora"
@@ -83,12 +101,6 @@ class SpotifyProtocolTests(unittest.TestCase):
         self.assertFalse(playback_is_active({"state": "paused"}))
         self.assertFalse(playback_is_active({"state": "stopped"}))
         self.assertTrue(playback_is_active({"state": "playing"}))
-
-    def test_host_command_round_trip(self):
-        message = build_host_command("FOCUS_SPOTIFY")
-        self.assertEqual(message, "MACROPAD\tFOCUS_SPOTIFY\n")
-        self.assertEqual(parse_host_command(message), "FOCUS_SPOTIFY")
-        self.assertIsNone(parse_host_command("SPOTIFY\tFOCUS_SPOTIFY\n"))
 
     def test_malformed_messages_are_ignored(self):
         self.assertIsNone(parse_message("hello"))

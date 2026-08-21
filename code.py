@@ -27,7 +27,7 @@ from config import (
 )
 from spotify_protocol import (
     DISPLAY_WIDTH,
-    build_host_command,
+    PlaybackPauseController,
     parse_message,
     playback_is_active,
     playback_display_rows,
@@ -82,6 +82,8 @@ def set_profile(profile_index):
             ]
             if profile["name"] == "MEDIA" and first == 0:
                 labels[1] = transport_label(spotify_playback)
+            elif profile["name"] == "MEDIA" and first == 6:
+                labels[0] = "UNLNK" if auto_pause_enabled else "LINK"
             display_lines[row + 1].text = "{:<5} {:<5} {:<5}".format(
                 labels[0], labels[1], labels[2]
             )
@@ -107,12 +109,66 @@ def send_encoder_navigation(delta):
         tap_hotkey(keys)
 
 
+def toggle_media_playback():
+    """Send the native play/pause consumer-control command."""
+    macropad.consumer_control.send(macropad.ConsumerControlCode.PLAY_PAUSE)
+
+
+def begin_media_pause(owner):
+    """Pause active playback for the first voice-mode owner."""
+    if not auto_pause_enabled:
+        return
+    if media_pause_controller.begin(owner, playback_is_active(spotify_playback)):
+        toggle_media_playback()
+
+
+def end_media_pause(owner):
+    """Resume playback after the final voice-mode owner ends."""
+    if media_pause_controller.end(owner):
+        toggle_media_playback()
+
+
+def release_held_media_pauses():
+    """Release every PTT pause owner, such as during profile changes."""
+    for owner in tuple(held_media_pause_owners.values()):
+        end_media_pause(owner)
+    held_media_pause_owners.clear()
+
+
+def toggle_auto_pause():
+    """Toggle voice-mode playback linking and synchronize current state."""
+    global auto_pause_enabled
+
+    auto_pause_enabled = not auto_pause_enabled
+    if auto_pause_enabled:
+        for mode_name in active_mode_indicators:
+            begin_media_pause("mode:{}".format(mode_name))
+    else:
+        held_media_pause_owners.clear()
+        if media_pause_controller.cancel():
+            toggle_media_playback()
+
+
 def press_key(index):
     """Run the active profile's configured press action."""
     global media_info_enabled, media_scroll_step
 
     binding = PROFILES[active_profile]["keys"][index]
     action = binding["action"]
+    pause_policy = binding.get("media_pause")
+    mode_toggle = binding.get("mode_toggle")
+    mode_activating = (
+        mode_toggle is not None
+        and mode_toggle not in active_mode_indicators
+    )
+
+    if pause_policy == "while_held":
+        owner = "held:{}:{}".format(active_profile, index)
+        held_media_pause_owners[index] = owner
+        begin_media_pause(owner)
+    elif pause_policy == "while_active" and mode_activating:
+        begin_media_pause("mode:{}".format(mode_toggle))
+
     macropad.pixels[index] = brighten(PROFILES[active_profile]["color"])
 
     if action == "hold_hotkey":
@@ -132,26 +188,26 @@ def press_key(index):
         macropad.consumer_control.send(code)
     elif action == "type_text":
         macropad.keyboard_layout.write(binding["text"])
-    elif action == "focus_spotify":
-        if spotify_serial is not None:
-            spotify_serial.write(
-                build_host_command("FOCUS_SPOTIFY").encode("ascii")
-            )
+    elif action == "toggle_auto_pause":
+        toggle_auto_pause()
+        set_profile(active_profile)
     elif action == "toggle_media_display":
         media_info_enabled = not media_info_enabled
         if media_info_enabled:
             media_scroll_step = 0
         set_profile(active_profile)
 
-    mode_toggle = binding.get("mode_toggle")
     if mode_toggle:
         if mode_toggle in active_mode_indicators:
             active_mode_indicators.pop(mode_toggle)
+            if pause_policy == "while_active":
+                end_media_pause("mode:{}".format(mode_toggle))
         else:
             active_mode_indicators[mode_toggle] = True
 
     for mode_name in binding.get("mode_clear", ()):
         active_mode_indicators.pop(mode_name, None)
+        end_media_pause("mode:{}".format(mode_name))
 
 
 def release_key(index):
@@ -161,6 +217,9 @@ def release_key(index):
         tap_hotkey(pending[1]["tap_keys"])
     if index in held_keycodes:
         macropad.keyboard.release(*held_keycodes.pop(index))
+    held_pause_owner = held_media_pause_owners.pop(index, None)
+    if held_pause_owner:
+        end_media_pause(held_pause_owner)
     macropad.pixels[index] = PROFILES[active_profile]["color"]
 
 
@@ -296,8 +355,11 @@ encoder_navigation_group.append(
     )
 )
 held_keycodes = {}
+held_media_pause_owners = {}
 pending_long_presses = {}
 active_mode_indicators = {}
+media_pause_controller = PlaybackPauseController()
+auto_pause_enabled = True
 spotify_playback = None
 spotify_serial = usb_cdc.data
 spotify_serial_buffer = ""
@@ -337,6 +399,7 @@ while True:
     if encoder_delta:
         macropad.keyboard.release_all()
         held_keycodes.clear()
+        release_held_media_pauses()
         pending_long_presses.clear()
         last_encoder_position = encoder_position
         if encoder_navigation_active:

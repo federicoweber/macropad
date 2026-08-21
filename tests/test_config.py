@@ -108,10 +108,13 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(town[5]["keys"], ("OPTION", "F"))
 
     def test_flow_hands_free_double_taps_ptt(self):
+        ptt = PROFILES[0]["keys"][0]
         hands_free = PROFILES[0]["keys"][1]
+        self.assertEqual(ptt["media_pause"], "while_held")
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
         self.assertEqual(hands_free["keys"], ("OPTION", "W"))
         self.assertEqual(hands_free["mode_toggle"], "flow_free")
+        self.assertEqual(hands_free["media_pause"], "while_active")
 
     def test_conversation_modes_control_pulse_indicator(self):
         flow = PROFILES[0]["keys"]
@@ -119,6 +122,7 @@ class ProfileTests(unittest.TestCase):
 
         self.assertEqual(flow[2]["mode_clear"], ("flow_free",))
         self.assertEqual(codex[1]["mode_toggle"], "codex_voice")
+        self.assertEqual(codex[1]["media_pause"], "while_active")
         self.assertEqual(codex[2]["mode_clear"], ("codex_voice",))
 
     def test_flow_profile_matches_requested_layout(self):
@@ -161,7 +165,7 @@ class ProfileTests(unittest.TestCase):
             [
                 "PREV", "PLAY", "NEXT",
                 "VOL-", "MUTE", "VOL+",
-                "FOCUS", "UP", "INFO",
+                "UNLNK", "UP", "INFO",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
@@ -173,7 +177,7 @@ class ProfileTests(unittest.TestCase):
             [binding["code"] for binding in media[3:6]],
             ["VOLUME_DECREMENT", "MUTE", "VOLUME_INCREMENT"],
         )
-        self.assertEqual(media[6]["action"], "focus_spotify")
+        self.assertEqual(media[6]["action"], "toggle_auto_pause")
         self.assertEqual(media[7]["keys"], ("UP_ARROW",))
         self.assertEqual(media[8]["action"], "toggle_media_display")
         self.assertEqual(media[9]["keys"], ("LEFT_ARROW",))

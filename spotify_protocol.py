@@ -2,9 +2,43 @@
 
 
 PREFIX = "SPOTIFY"
-HOST_COMMAND_PREFIX = "MACROPAD"
 DISPLAY_WIDTH = 21
 SCROLL_PAUSE_STEPS = 4
+
+
+class PlaybackPauseController:
+    """Coordinate nested voice modes around one pause/resume pair."""
+
+    def __init__(self):
+        self.owners = set()
+        self.should_resume = False
+
+    def begin(self, owner, playback_active):
+        """Register an owner and return whether playback should pause."""
+        if owner in self.owners:
+            return False
+        should_pause = not self.owners and playback_active
+        self.owners.add(owner)
+        if should_pause:
+            self.should_resume = True
+        return should_pause
+
+    def end(self, owner):
+        """Release an owner and return whether playback should resume."""
+        if owner not in self.owners:
+            return False
+        self.owners.remove(owner)
+        should_resume = not self.owners and self.should_resume
+        if should_resume:
+            self.should_resume = False
+        return should_resume
+
+    def cancel(self):
+        """Clear all owners and return whether playback should resume."""
+        should_resume = self.should_resume
+        self.owners.clear()
+        self.should_resume = False
+        return should_resume
 
 
 def clean_field(value):
@@ -69,19 +103,6 @@ def parse_message(line):
         "position": position,
         "duration": duration,
     }
-
-
-def build_host_command(command):
-    """Build one MacroPad-to-host command."""
-    return "{}\t{}\n".format(HOST_COMMAND_PREFIX, clean_field(command))
-
-
-def parse_host_command(line):
-    """Parse one MacroPad-to-host command."""
-    fields = line.rstrip("\r\n").split("\t")
-    if len(fields) != 2 or fields[0] != HOST_COMMAND_PREFIX:
-        return None
-    return fields[1]
 
 
 def format_time(seconds):

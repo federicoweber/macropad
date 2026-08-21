@@ -26,6 +26,11 @@ Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
 press that profile's `ESC` to clear it. The indicator remains visible when the
 encoder switches profiles.
 
+If Spotify is playing, starting Wispr Flow `PTT` or `FREE`, or Codex `VOICE`,
+automatically pauses playback. PTT resumes it on release; FREE and VOICE resume
+it when toggled off or cleared with `ESC`. Overlapping modes keep playback
+paused until the final active mode ends.
+
 ### 1. WISPR FLOW — purple
 
 | Left | Middle | Right |
@@ -83,7 +88,7 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 |------|--------|-------|
 | `PREV` Previous | `PLAY`/`PAUSE` | `NEXT` Next |
 | `VOL-` Volume down | `MUTE` Mute | `VOL+` Volume up |
-| `FOCUS` Show Spotify | `UP` Up | `INFO` Toggle OLED view |
+| `UNLNK`/`LINK` Auto-pause | `UP` Up | `INFO` Toggle OLED view |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 Media uses native USB consumer-control commands and works without app-specific
@@ -98,8 +103,8 @@ and returns to `PLAY` otherwise.
 While Spotify is playing and Media is selected, the complete orange key set
 uses the same breathing animation as the Wispr Flow and Codex active modes.
 
-`FOCUS` asks the local relay to bring Spotify to the foreground. If Spotify is
-closed, macOS launches it first.
+`UNLNK` means automatic pausing is currently linked to voice modes; press it to
+disable the behavior. The label then changes to `LINK`, which re-enables it.
 
 ## Spotify now playing
 
@@ -173,7 +178,7 @@ Supported actions are:
 - `tap_or_long_hotkey`: send different chords for a tap and a long press
 - `consumer`: send a USB media-control code
 - `type_text`: type literal text
-- `focus_spotify`: ask the host relay to activate Spotify
+- `toggle_auto_pause`: link or unlink playback from voice modes
 - `toggle_media_display`: switch the Media OLED between key and playback views
 - `noop`: intentionally leave a key unused
 
