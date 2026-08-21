@@ -91,3 +91,10 @@ def playback_display_rows(playback):
         artist[:DISPLAY_WIDTH],
         progress[:DISPLAY_WIDTH],
     )
+
+
+def transport_label(playback):
+    """Return the action the center transport key will perform."""
+    if playback and playback.get("state") == "playing":
+        return "PAUSE"
+    return "PLAY"

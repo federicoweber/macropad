@@ -157,11 +157,28 @@ class ProfileTests(unittest.TestCase):
     def test_media_profile_uses_consumer_controls(self):
         media = PROFILES[3]["keys"]
         self.assertEqual(
+            [binding["label"] for binding in media],
+            [
+                "PREV", "PLAY", "NEXT",
+                "VOL-", "MUTE", "VOL+",
+                "INFO", "UP", "----",
+                "LEFT", "DOWN", "RIGHT",
+            ],
+        )
+        self.assertEqual(
             [binding["code"] for binding in media[:3]],
             ["SCAN_PREVIOUS_TRACK", "PLAY_PAUSE", "SCAN_NEXT_TRACK"],
         )
-        self.assertEqual(media[10]["label"], "INFO")
-        self.assertEqual(media[10]["action"], "toggle_media_display")
+        self.assertEqual(
+            [binding["code"] for binding in media[3:6]],
+            ["VOLUME_DECREMENT", "MUTE", "VOLUME_INCREMENT"],
+        )
+        self.assertEqual(media[6]["action"], "toggle_media_display")
+        self.assertEqual(media[7]["keys"], ("UP_ARROW",))
+        self.assertEqual(media[8]["action"], "noop")
+        self.assertEqual(media[9]["keys"], ("LEFT_ARROW",))
+        self.assertEqual(media[10]["keys"], ("DOWN_ARROW",))
+        self.assertEqual(media[11]["keys"], ("RIGHT_ARROW",))
 
     def test_validation_catches_wrong_key_count(self):
         invalid_profile = dict(PROFILES[0])

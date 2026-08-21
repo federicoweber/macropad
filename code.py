@@ -24,7 +24,7 @@ from config import (
     SPOTIFY_STALE_SECONDS,
     validate_profiles,
 )
-from spotify_protocol import parse_message, playback_display_rows
+from spotify_protocol import parse_message, playback_display_rows, transport_label
 
 
 macropad = MacroPad()
@@ -69,6 +69,8 @@ def set_profile(profile_index):
                 profile["keys"][first + column]["label"]
                 for column in range(3)
             ]
+            if profile["name"] == "MEDIA" and first == 0:
+                labels[1] = transport_label(spotify_playback)
             display_lines[row + 1].text = "{:<5} {:<5} {:<5}".format(
                 labels[0], labels[1], labels[2]
             )

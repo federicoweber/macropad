@@ -81,16 +81,17 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `PREV` Previous | `PLAY` Play/pause | `NEXT` Next |
-| `RW` Rewind | `STOP` Stop | `FF` Fast-forward |
+| `PREV` Previous | `PLAY`/`PAUSE` | `NEXT` Next |
 | `VOL-` Volume down | `MUTE` Mute | `VOL+` Volume up |
-| `DIM` Brightness down | `INFO` Toggle OLED view | `BRIT` Brightness up |
+| `INFO` Toggle OLED view | `UP` Up | `----` Unused |
+| `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 Media uses native USB consumer-control commands and works without app-specific
 configuration. While Spotify is playing, the OLED can show the current track,
 artist, and playback time. Press `INFO` to toggle between that view and the
 Media keymap. If Spotify is paused, stopped, or unavailable, the keymap remains
-visible.
+visible. In the keymap view, the center transport label changes to `PAUSE`
+while Spotify is playing and returns to `PLAY` otherwise.
 
 ## Spotify now playing
 

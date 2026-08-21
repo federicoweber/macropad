@@ -8,6 +8,7 @@ from spotify_protocol import (
     format_time,
     parse_message,
     playback_display_rows,
+    transport_label,
 )
 
 
@@ -51,6 +52,12 @@ class SpotifyProtocolTests(unittest.TestCase):
     def test_time_format(self):
         self.assertEqual(format_time(65), "1:05")
         self.assertEqual(format_time(3661), "1:01:01")
+
+    def test_transport_label_tracks_playback_state(self):
+        self.assertEqual(transport_label(None), "PLAY")
+        self.assertEqual(transport_label({"state": "stopped"}), "PLAY")
+        self.assertEqual(transport_label({"state": "paused"}), "PLAY")
+        self.assertEqual(transport_label({"state": "playing"}), "PAUSE")
 
     def test_malformed_messages_are_ignored(self):
         self.assertIsNone(parse_message("hello"))
