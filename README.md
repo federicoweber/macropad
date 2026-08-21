@@ -21,10 +21,11 @@ Hold the board upright with the OLED and encoder above the keys.
 The bottom two rows are a shared navigation pad in Wispr Flow, Codex, and Town.
 Media keeps its dedicated controls.
 
-The full key backlight smoothly pulses while Wispr Flow hands-free mode or Codex
-Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
-press that profile's `ESC` to clear it. The indicator remains visible when the
-encoder switches profiles.
+The full key backlight uses a slow four-second breathing cycle while Wispr Flow
+PTT is held, or while Wispr Flow hands-free mode or Codex Voice Mode is locally
+marked active. Press `FREE` or `VOICE` to toggle its mode; press that profile's
+`ESC` to clear it. The indicator remains visible when the encoder switches
+profiles.
 
 If Spotify is playing, starting Wispr Flow `PTT` or `FREE`, or Codex `VOICE`,
 automatically pauses playback. PTT resumes it on release; FREE and VOICE resume
@@ -100,8 +101,9 @@ paused, stopped, or unavailable, the keymap remains visible. In the keymap
 view, the center transport label changes to `PAUSE` while Spotify is playing
 and returns to `PLAY` otherwise.
 
-While Spotify is playing and Media is selected, the complete orange key set
-uses the same breathing animation as the Wispr Flow and Codex active modes.
+While Spotify is playing and Media is selected, the 3×4 orange key grid becomes
+a three-band visualizer. The columns represent bass, mid, and treble, and each
+four-spot bar grows upward from the bottom in time with Spotify's actual audio.
 
 Automatic pausing starts unlinked after boot, so the button initially shows
 `LINK`. Press it to enable the behavior; the label changes to `UNLNK`, which
@@ -110,8 +112,10 @@ disables it again.
 ## Spotify now playing
 
 `spotify_relay.py` reads Spotify's native macOS playback metadata and sends it
-to the MacroPad over a second USB serial channel. It stays on the local machine
-and does not need Spotify API credentials or an OAuth login.
+to the MacroPad over a second USB serial channel. A local Swift helper captures
+only Spotify's system-audio output and sends three frequency-band levels 30
+times per second for the Media LED animation. The integration stays local and does
+not need Spotify API credentials or an OAuth login.
 
 After installing the host requirements and deploying the firmware, run the
 relay in a terminal:
@@ -121,8 +125,10 @@ relay in a terminal:
 ```
 
 macOS may ask whether Python can control Spotify the first time. Allow that
-request so the relay can read the current track. To start the relay
-automatically at login, copy the included launch agent and load it:
+request so the relay can read the current track. macOS may also ask for Screen
+& System Audio Recording access for **AI MacroPad Spotify Audio Meter**; allow
+it so the LEDs can react to Spotify's audio. To start the relay automatically
+at login, copy the included launch agent and load it:
 
 ```sh
 cp launchd/com.federicoweber.ai-macropad-spotify.plist ~/Library/LaunchAgents/
@@ -149,6 +155,14 @@ The launch agent paths assume this repository is located at
    ```sh
    make install CIRCUP=.venv/bin/circup
    ```
+
+4. Request Spotify-only audio capture access for the visualizer:
+
+   ```sh
+   open .build/SpotifyAudioMeter.app --args --request-permission
+   ```
+
+   Choose **Allow** when macOS asks for Screen & System Audio Recording access.
 
 If the board is mounted somewhere other than `/Volumes/CIRCUITPY`, add
 `CIRCUITPY=/path/to/CIRCUITPY` to the `make` command.
@@ -198,6 +212,7 @@ code.py                 Profile switching and hardware event loop
 config.py               Profiles, key bindings, labels, and colors
 spotify_protocol.py     Shared compact metadata protocol
 spotify_relay.py        Local macOS Spotify-to-USB relay
+host/SpotifyAudioMeter  Native Spotify-only audio-level helper
 launchd/                Optional automatic relay startup
 requirements.txt        CircuitPython libraries installed on the board
 requirements-host.txt   Host deployment and relay tools

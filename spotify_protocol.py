@@ -2,6 +2,7 @@
 
 
 PREFIX = "SPOTIFY"
+LEVEL_PREFIX = "SPOTIFY_LEVEL"
 DISPLAY_WIDTH = 21
 SCROLL_PAUSE_STEPS = 4
 
@@ -103,6 +104,44 @@ def parse_message(line):
         "position": position,
         "duration": duration,
     }
+
+
+def build_audio_level_message(levels):
+    """Build one compact bass/mid/treble audio-level update."""
+    encoded_levels = []
+    for level in levels:
+        level = min(1.0, max(0.0, float(level)))
+        encoded_levels.append(str(int(level * 255)))
+    if len(encoded_levels) != 3:
+        raise ValueError("audio level message requires three bands")
+    return "{}\t{}\n".format(LEVEL_PREFIX, "\t".join(encoded_levels))
+
+
+def parse_audio_level_message(line):
+    """Parse an audio-level update into a normalized float."""
+    fields = line.rstrip("\r\n").split("\t")
+    if len(fields) != 4 or fields[0] != LEVEL_PREFIX:
+        return None
+    try:
+        encoded_levels = tuple(int(value) for value in fields[1:])
+    except ValueError:
+        return None
+    if any(level < 0 or level > 255 for level in encoded_levels):
+        return None
+    return tuple(level / 255.0 for level in encoded_levels)
+
+
+def equalizer_pixels(levels):
+    """Map three audio bands to bottom-up columns on the 3x4 key grid."""
+    heights = tuple(
+        min(4, int(min(1.0, max(0.0, level)) * 6.0))
+        for level in levels
+    )
+    return tuple(
+        (3 - row) < heights[column]
+        for row in range(4)
+        for column in range(3)
+    )
 
 
 def format_time(seconds):

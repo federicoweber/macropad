@@ -4,10 +4,13 @@ import unittest
 
 from spotify_protocol import (
     PlaybackPauseController,
+    build_audio_level_message,
     build_message,
     clean_field,
+    equalizer_pixels,
     format_time,
     parse_message,
+    parse_audio_level_message,
     playback_is_active,
     playback_display_rows,
     scrolling_display_text,
@@ -16,6 +19,29 @@ from spotify_protocol import (
 
 
 class SpotifyProtocolTests(unittest.TestCase):
+    def test_audio_level_round_trip_and_validation(self):
+        message = build_audio_level_message((0.5, -1, 2))
+        self.assertEqual(message, "SPOTIFY_LEVEL\t127\t0\t255\n")
+        self.assertEqual(
+            parse_audio_level_message(message),
+            (127 / 255, 0.0, 1.0),
+        )
+        self.assertIsNone(parse_audio_level_message("SPOTIFY_LEVEL\tbad\t0\t0\n"))
+        self.assertIsNone(parse_audio_level_message("SPOTIFY_LEVEL\t256\t0\t0\n"))
+        with self.assertRaises(ValueError):
+            build_audio_level_message((0.5, 0.5))
+
+    def test_equalizer_pixels_grow_up_each_column(self):
+        self.assertEqual(
+            equalizer_pixels((0.3, 0.5, 0.9)),
+            (
+                False, False, True,
+                False, True, True,
+                False, True, True,
+                True, True, True,
+            ),
+        )
+
     def test_playback_pause_controller_handles_overlapping_modes(self):
         controller = PlaybackPauseController()
         self.assertTrue(controller.begin("flow_free", True))

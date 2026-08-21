@@ -67,6 +67,7 @@ PROFILES = (
                 "action": "hold_hotkey",
                 "keys": ("OPTION", "W"),
                 "media_pause": "while_held",
+                "pulse_while_held": "flow_ptt",
             },
             {
                 "label": "FREE",
@@ -146,10 +147,11 @@ PIXEL_BRIGHTNESS = 0.14
 PRESS_BRIGHTNESS = 2.25
 DOUBLE_TAP_GAP_SECONDS = 0.12
 LONG_PRESS_SECONDS = 0.5
-PULSE_PERIOD_SECONDS = 1.5
+PULSE_PERIOD_SECONDS = 4.0
 PULSE_MIN_FACTOR = 0.25
 PULSE_UPDATE_SECONDS = 0.03
 SPOTIFY_STALE_SECONDS = 5.0
+SPOTIFY_LEVEL_STALE_SECONDS = 0.2
 MEDIA_SCROLL_UPDATE_SECONDS = 0.25
 ENCODER_PRESSED_LEFT_KEYS = ("CONTROL", "LEFT_ARROW")
 ENCODER_PRESSED_RIGHT_KEYS = ("CONTROL", "RIGHT_ARROW")

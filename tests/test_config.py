@@ -8,6 +8,7 @@ from config import (
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
     PROFILES,
+    PULSE_PERIOD_SECONDS,
     validate_profiles,
 )
 
@@ -32,6 +33,9 @@ class ProfileTests(unittest.TestCase):
                 (255, 80, 0),
             ],
         )
+
+    def test_conversation_pulse_uses_slow_cycle(self):
+        self.assertEqual(PULSE_PERIOD_SECONDS, 4.0)
 
     def test_every_profile_matches_physical_board(self):
         for profile in PROFILES:
@@ -111,6 +115,7 @@ class ProfileTests(unittest.TestCase):
         ptt = PROFILES[0]["keys"][0]
         hands_free = PROFILES[0]["keys"][1]
         self.assertEqual(ptt["media_pause"], "while_held")
+        self.assertEqual(ptt["pulse_while_held"], "flow_ptt")
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
         self.assertEqual(hands_free["keys"], ("OPTION", "W"))
         self.assertEqual(hands_free["mode_toggle"], "flow_free")

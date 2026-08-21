@@ -22,12 +22,15 @@ from config import (
     PULSE_MIN_FACTOR,
     PULSE_PERIOD_SECONDS,
     PULSE_UPDATE_SECONDS,
+    SPOTIFY_LEVEL_STALE_SECONDS,
     SPOTIFY_STALE_SECONDS,
     validate_profiles,
 )
 from spotify_protocol import (
     DISPLAY_WIDTH,
     PlaybackPauseController,
+    equalizer_pixels,
+    parse_audio_level_message,
     parse_message,
     playback_is_active,
     playback_display_rows,
@@ -54,6 +57,11 @@ def resolve_keycodes(names):
 def brighten(color):
     """Return a brighter RGB color without overflowing a channel."""
     return tuple(min(255, int(channel * PRESS_BRIGHTNESS)) for channel in color)
+
+
+def dim(color, factor):
+    """Scale an RGB color for an unlit equalizer spot."""
+    return tuple(int(channel * factor) for channel in color)
 
 
 def set_profile(profile_index):
@@ -169,6 +177,10 @@ def press_key(index):
     elif pause_policy == "while_active" and mode_activating:
         begin_media_pause("mode:{}".format(mode_toggle))
 
+    pulse_while_held = binding.get("pulse_while_held")
+    if pulse_while_held:
+        held_pulse_indicators[index] = pulse_while_held
+
     macropad.pixels[index] = brighten(PROFILES[active_profile]["color"])
 
     if action == "hold_hotkey":
@@ -220,6 +232,7 @@ def release_key(index):
     held_pause_owner = held_media_pause_owners.pop(index, None)
     if held_pause_owner:
         end_media_pause(held_pause_owner)
+    held_pulse_indicators.pop(index, None)
     macropad.pixels[index] = PROFILES[active_profile]["color"]
 
 
@@ -243,7 +256,16 @@ def service_mode_indicator(last_update):
         PROFILES[active_profile]["name"] == "MEDIA"
         and playback_is_active(spotify_playback)
     )
-    if active_mode_indicators or media_playing:
+    if media_playing:
+        macropad.pixels.brightness = PIXEL_BRIGHTNESS
+        levels = spotify_audio_levels
+        if now - last_spotify_level_update > SPOTIFY_LEVEL_STALE_SECONDS:
+            levels = (0.0, 0.0, 0.0)
+        color = PROFILES[active_profile]["color"]
+        unlit_color = dim(color, 0.06)
+        for index, illuminated in enumerate(equalizer_pixels(levels)):
+            macropad.pixels[index] = color if illuminated else unlit_color
+    elif active_mode_indicators or held_pulse_indicators:
         phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS
         triangle = 1.0 - abs((phase * 2.0) - 1.0)
         factor = PULSE_MIN_FACTOR + ((1.0 - PULSE_MIN_FACTOR) * triangle)
@@ -283,6 +305,7 @@ def apply_spotify_message(line):
 
 def service_spotify_serial():
     """Consume pending metadata without blocking the key event loop."""
+    global last_spotify_level_update, spotify_audio_levels
     global spotify_playback, spotify_serial_buffer
 
     if spotify_serial is not None and spotify_serial.in_waiting:
@@ -291,7 +314,12 @@ def service_spotify_serial():
             spotify_serial_buffer += data.decode("ascii")
             while "\n" in spotify_serial_buffer:
                 line, spotify_serial_buffer = spotify_serial_buffer.split("\n", 1)
-                apply_spotify_message(line)
+                audio_levels = parse_audio_level_message(line)
+                if audio_levels is None:
+                    apply_spotify_message(line)
+                else:
+                    spotify_audio_levels = audio_levels
+                    last_spotify_level_update = time.monotonic()
 
     if (
         spotify_playback
@@ -356,14 +384,17 @@ encoder_navigation_group.append(
 )
 held_keycodes = {}
 held_media_pause_owners = {}
+held_pulse_indicators = {}
 pending_long_presses = {}
 active_mode_indicators = {}
 media_pause_controller = PlaybackPauseController()
 auto_pause_enabled = False
 spotify_playback = None
+spotify_audio_levels = (0.0, 0.0, 0.0)
 spotify_serial = usb_cdc.data
 spotify_serial_buffer = ""
 last_spotify_update = 0.0
+last_spotify_level_update = 0.0
 media_info_enabled = True
 media_scroll_step = 0
 active_profile = 0
@@ -400,6 +431,7 @@ while True:
         macropad.keyboard.release_all()
         held_keycodes.clear()
         release_held_media_pauses()
+        held_pulse_indicators.clear()
         pending_long_presses.clear()
         last_encoder_position = encoder_position
         if encoder_navigation_active:
