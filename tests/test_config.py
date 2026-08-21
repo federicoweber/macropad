@@ -52,6 +52,11 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
         self.assertEqual(hands_free["keys"], ("OPTION", "W"))
 
+    def test_flow_third_row_right_is_enter(self):
+        enter = PROFILES[0]["keys"][8]
+        self.assertEqual(enter["label"], "ENTER")
+        self.assertEqual(enter["keys"], ("ENTER",))
+
     def test_codex_profile_uses_native_new_and_search_shortcuts(self):
         codex = PROFILES[1]["keys"]
         self.assertEqual(codex[1]["keys"], ("COMMAND", "N"))

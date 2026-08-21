@@ -19,7 +19,7 @@ Hold the board upright with the OLED and encoder above the keys.
 |------|--------|-------|
 | `PTT` Push to talk | `FREE` Hands-free | `CMD` Command Mode |
 | `CANC` Cancel | `PAST` Paste last | `COPY` Copy last |
-| `POL` Polish | `PRMT` Prompt Engineer | `DIFF` View changes |
+| `POL` Polish | `PRMT` Prompt Engineer | `ENTER` Submit |
 | `BACK` Hub back | `FWD` Hub forward | `NOTE` Scratchpad |
 
 `PTT` holds `Option+W`, matching the user-configured Flow shortcut. `FREE`
@@ -30,7 +30,8 @@ The remaining shortcuts use Flow's current native bindings:
 
 - Cancel: `Escape`
 - Paste/copy last transcript: `Command+Control+V/C`
-- Polish / Prompt Engineer / View Diff: `Option+1/2/O`
+- Polish / Prompt Engineer: `Option+1/2`
+- Submit: `Enter`
 - Hub back/forward: `Command+[` / `Command+]`
 - Scratchpad: `Option+S`
 

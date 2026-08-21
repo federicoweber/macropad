@@ -43,7 +43,7 @@ PROFILES = (
             hotkey("COPY", "COMMAND", "CONTROL", "C"),
             hotkey("POL", "OPTION", "ONE"),
             hotkey("PRMT", "OPTION", "TWO"),
-            hotkey("DIFF", "OPTION", "O"),
+            hotkey("ENTER", "ENTER"),
             hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
             hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
             hotkey("NOTE", "OPTION", "S"),
