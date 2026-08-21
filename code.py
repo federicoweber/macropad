@@ -29,6 +29,7 @@ from spotify_protocol import (
     DISPLAY_WIDTH,
     build_host_command,
     parse_message,
+    playback_is_active,
     playback_display_rows,
     scrolling_display_text,
     transport_label,
@@ -179,7 +180,11 @@ def service_mode_indicator(last_update):
     if now - last_update < PULSE_UPDATE_SECONDS:
         return last_update
 
-    if active_mode_indicators:
+    media_playing = (
+        PROFILES[active_profile]["name"] == "MEDIA"
+        and playback_is_active(spotify_playback)
+    )
+    if active_mode_indicators or media_playing:
         phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS
         triangle = 1.0 - abs((phase * 2.0) - 1.0)
         factor = PULSE_MIN_FACTOR + ((1.0 - PULSE_MIN_FACTOR) * triangle)

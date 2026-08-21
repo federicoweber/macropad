@@ -95,6 +95,9 @@ paused, stopped, or unavailable, the keymap remains visible. In the keymap
 view, the center transport label changes to `PAUSE` while Spotify is playing
 and returns to `PLAY` otherwise.
 
+While Spotify is playing and Media is selected, the complete orange key set
+uses the same breathing animation as the Wispr Flow and Codex active modes.
+
 `FOCUS` asks the local relay to bring Spotify to the foreground. If Spotify is
 closed, macOS launches it first.
 

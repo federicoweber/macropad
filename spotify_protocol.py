@@ -96,7 +96,7 @@ def format_time(seconds):
 
 def playback_display_rows(playback):
     """Return four OLED rows only for active playback."""
-    if not playback or playback.get("state") != "playing":
+    if not playback_is_active(playback):
         return None
 
     title = playback.get("title") or "Unknown track"
@@ -135,6 +135,11 @@ def scrolling_display_text(
 
 def transport_label(playback):
     """Return the action the center transport key will perform."""
-    if playback and playback.get("state") == "playing":
+    if playback_is_active(playback):
         return "PAUSE"
     return "PLAY"
+
+
+def playback_is_active(playback):
+    """Return whether Spotify reports active playback."""
+    return bool(playback and playback.get("state") == "playing")

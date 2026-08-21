@@ -8,6 +8,7 @@ from spotify_protocol import (
     clean_field,
     format_time,
     parse_message,
+    playback_is_active,
     playback_display_rows,
     parse_host_command,
     scrolling_display_text,
@@ -76,6 +77,12 @@ class SpotifyProtocolTests(unittest.TestCase):
         self.assertEqual(transport_label({"state": "stopped"}), "PLAY")
         self.assertEqual(transport_label({"state": "paused"}), "PLAY")
         self.assertEqual(transport_label({"state": "playing"}), "PAUSE")
+
+    def test_active_playback_state(self):
+        self.assertFalse(playback_is_active(None))
+        self.assertFalse(playback_is_active({"state": "paused"}))
+        self.assertFalse(playback_is_active({"state": "stopped"}))
+        self.assertTrue(playback_is_active({"state": "playing"}))
 
     def test_host_command_round_trip(self):
         message = build_host_command("FOCUS_SPOTIFY")
