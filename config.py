@@ -25,9 +25,21 @@ def unused():
     return {"label": "----", "action": "noop"}
 
 
+def navigation_pad():
+    """Create the shared navigation rows used by non-music profiles."""
+    return (
+        hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
+        hotkey("UP", "UP_ARROW"),
+        hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
+        hotkey("LEFT", "LEFT_ARROW"),
+        hotkey("DOWN", "DOWN_ARROW"),
+        hotkey("RIGHT", "RIGHT_ARROW"),
+    )
+
+
 PROFILES = (
     {
-        "name": "FLOW",
+        "name": "W. Flow",
         "color": (132, 62, 255),
         "keys": (
             # User-configured Flow push-to-talk shortcut.
@@ -37,17 +49,11 @@ PROFILES = (
                 "action": "double_tap_hotkey",
                 "keys": ("OPTION", "W"),
             },
-            hotkey("CMD", "COMMAND", "CONTROL", "OPTION", hold=True),
+            hotkey("ENTER", "ENTER"),
             hotkey("CANC", "ESCAPE"),
             hotkey("PAST", "COMMAND", "CONTROL", "V"),
             hotkey("COPY", "COMMAND", "CONTROL", "C"),
-            hotkey("POL", "OPTION", "ONE"),
-            hotkey("PRMT", "OPTION", "TWO"),
-            hotkey("ENTER", "ENTER"),
-            hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
-            hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
-            hotkey("NOTE", "OPTION", "S"),
-        ),
+        ) + navigation_pad(),
     },
     {
         "name": "CODEX",
@@ -59,13 +65,7 @@ PROFILES = (
             hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
             hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
             hotkey("ENTER", "ENTER"),
-            hotkey("NEW", "COMMAND", "N"),
-            hotkey("UP", "UP_ARROW"),
-            hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
-            hotkey("LEFT", "LEFT_ARROW"),
-            hotkey("DOWN", "DOWN_ARROW"),
-            hotkey("RIGHT", "RIGHT_ARROW"),
-        ),
+        ) + navigation_pad(),
     },
     {
         "name": "TOWN",
@@ -78,13 +78,7 @@ PROFILES = (
             hotkey("HOME", "OPTION", "H"),
             hotkey("SECT", "OPTION", "S"),
             hotkey("FULL", "OPTION", "F"),
-            unused(),
-            hotkey("UP", "UP_ARROW"),
-            unused(),
-            hotkey("LEFT", "LEFT_ARROW"),
-            hotkey("DOWN", "DOWN_ARROW"),
-            hotkey("RGHT", "RIGHT_ARROW"),
-        ),
+        ) + navigation_pad(),
     },
     {
         "name": "MUSIC",

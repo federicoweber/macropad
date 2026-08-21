@@ -12,7 +12,7 @@ class ProfileTests(unittest.TestCase):
     def test_expected_profiles_exist(self):
         self.assertEqual(
             [profile["name"] for profile in PROFILES],
-            ["FLOW", "CODEX", "TOWN", "MUSIC"],
+            ["W. Flow", "CODEX", "TOWN", "MUSIC"],
         )
 
     def test_every_profile_matches_physical_board(self):
@@ -27,14 +27,27 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(flow_ptt["keys"], ("OPTION", "W"))
         self.assertEqual(town_open["keys"], ("OPTION", "T"))
 
-    def test_town_navigation_forms_dpad(self):
-        town = PROFILES[2]["keys"]
-        self.assertEqual(town[2]["keys"], ("ESCAPE",))
-        self.assertEqual(town[7]["keys"], ("UP_ARROW",))
-        self.assertEqual(
-            [binding["keys"] for binding in town[9:12]],
-            [("LEFT_ARROW",), ("DOWN_ARROW",), ("RIGHT_ARROW",)],
-        )
+    def test_non_music_profiles_share_navigation_pad(self):
+        expected_labels = ["BACK", "UP", "FWD", "LEFT", "DOWN", "RIGHT"]
+        expected_keys = [
+            ("COMMAND", "LEFT_BRACKET"),
+            ("UP_ARROW",),
+            ("COMMAND", "RIGHT_BRACKET"),
+            ("LEFT_ARROW",),
+            ("DOWN_ARROW",),
+            ("RIGHT_ARROW",),
+        ]
+
+        for profile in PROFILES[:3]:
+            navigation = profile["keys"][6:]
+            self.assertEqual(
+                [binding["label"] for binding in navigation],
+                expected_labels,
+            )
+            self.assertEqual(
+                [binding["keys"] for binding in navigation],
+                expected_keys,
+            )
 
     def test_town_native_global_shortcuts(self):
         town = PROFILES[2]["keys"]
@@ -52,10 +65,18 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
         self.assertEqual(hands_free["keys"], ("OPTION", "W"))
 
-    def test_flow_third_row_right_is_enter(self):
-        enter = PROFILES[0]["keys"][8]
-        self.assertEqual(enter["label"], "ENTER")
-        self.assertEqual(enter["keys"], ("ENTER",))
+    def test_flow_profile_matches_requested_layout(self):
+        flow = PROFILES[0]["keys"]
+        self.assertEqual(
+            [binding["label"] for binding in flow],
+            [
+                "PTT", "FREE", "ENTER",
+                "CANC", "PAST", "COPY",
+                "BACK", "UP", "FWD",
+                "LEFT", "DOWN", "RIGHT",
+            ],
+        )
+        self.assertEqual(flow[2]["keys"], ("ENTER",))
 
     def test_codex_profile_matches_requested_layout(self):
         codex = PROFILES[1]["keys"]
@@ -64,7 +85,7 @@ class ProfileTests(unittest.TestCase):
             [
                 "CMD", "VOICE", "ESC",
                 "BACK", "FWD", "ENTER",
-                "NEW", "UP", "TERM",
+                "BACK", "UP", "FWD",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
@@ -72,13 +93,7 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(codex[1]["keys"], ("OPTION", "C"))
         self.assertEqual(codex[3]["keys"], ("COMMAND", "LEFT_BRACKET"))
         self.assertEqual(codex[4]["keys"], ("COMMAND", "RIGHT_BRACKET"))
-        self.assertEqual(codex[6]["keys"], ("COMMAND", "N"))
         self.assertEqual(codex[7]["keys"], ("UP_ARROW",))
-        self.assertEqual(codex[8]["keys"], ("CONTROL", "GRAVE_ACCENT"))
-        self.assertEqual(
-            [binding["keys"] for binding in codex[9:]],
-            [("LEFT_ARROW",), ("DOWN_ARROW",), ("RIGHT_ARROW",)],
-        )
 
     def test_music_profile_uses_consumer_controls(self):
         music = PROFILES[3]["keys"]

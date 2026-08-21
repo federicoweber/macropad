@@ -4,7 +4,7 @@ Profile-based CircuitPython firmware for the [Adafruit MacroPad RP2040 Starter
 Kit](https://www.adafruit.com/product/5128), designed for an AI-heavy macOS
 workflow.
 
-Turn the encoder to switch between Flow, Codex, Town, and Music. The OLED shows
+Turn the encoder to switch between W. Flow, Codex, Town, and Music. The OLED shows
 the active profile and its 3×4 keymap, while all 12 NeoPixels change to the
 profile color. The firmware appears to macOS as a standard USB keyboard and
 media controller; it does not require a desktop helper.
@@ -13,41 +13,40 @@ media controller; it does not require a desktop helper.
 
 Hold the board upright with the OLED and encoder above the keys.
 
-### 1. Flow — purple
+The bottom two rows are a shared navigation pad in W. Flow, Codex, and Town.
+Music keeps its dedicated media controls.
+
+### 1. W. Flow — purple
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `PTT` Push to talk | `FREE` Hands-free | `CMD` Command Mode |
+| `PTT` Push to talk | `FREE` Hands-free | `ENTER` Submit |
 | `CANC` Cancel | `PAST` Paste last | `COPY` Copy last |
-| `POL` Polish | `PRMT` Prompt Engineer | `ENTER` Submit |
-| `BACK` Hub back | `FWD` Hub forward | `NOTE` Scratchpad |
+| `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
+| `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `PTT` holds `Option+W`, matching the user-configured Flow shortcut. `FREE`
-double-taps the same shortcut, which Flow interprets as hands-free mode. `CMD`
-holds Flow's native non-Apple-keyboard fallback, `Command+Control+Option`.
+double-taps the same shortcut, which Flow interprets as hands-free mode.
 
 The remaining shortcuts use Flow's current native bindings:
 
 - Cancel: `Escape`
 - Paste/copy last transcript: `Command+Control+V/C`
-- Polish / Prompt Engineer: `Option+1/2`
 - Submit: `Enter`
 - Hub back/forward: `Command+[` / `Command+]`
-- Scratchpad: `Option+S`
 
 ### 2. Codex — cyan
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `CMD` Command menu | `VOICE` Dictation | `ESC` Dismiss |
+| `CMD` Command menu | `VOICE` Voice Mode | `ESC` Dismiss |
 | `BACK` Navigate back | `FWD` Navigate forward | `ENTER` Submit |
-| `NEW` New chat | `UP` Up | `TERM` Terminal |
+| `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `VOICE` sends `Option+C`, matching the user-verified Codex Voice Mode shortcut.
-The other app actions use native Codex shortcuts, including `Command+N` for a
-new chat and `Control+\`` for the terminal. The final two rows also provide arrow
-navigation.
+The command menu and back/forward actions use Codex's native shortcuts. The
+final two rows provide the shared navigation pad.
 
 ### 3. Town — orange
 
@@ -55,8 +54,8 @@ navigation.
 |------|--------|-------|
 | `QUICK` Quick Town | `FOCUS` Focus Town window | `ESC` Dismiss |
 | `HOME` Home | `SECT` Capture selection | `FULL` Capture full screen |
-| `----` Unused | `UP` Up | `----` Unused |
-| `LEFT` Left | `DOWN` Down | `RGHT` Right |
+| `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
+| `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `HOME` sends `Option+H`,
 `SECT` sends `Option+S`, and `FULL` sends `Option+F`. The final two rows form a
