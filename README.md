@@ -21,7 +21,7 @@ Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
 press that profile's `ESC` to clear it. The indicator remains visible when the
 encoder switches profiles.
 
-### 1. Wispr Flow — purple
+### 1. WISPR FLOW — purple
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -42,7 +42,7 @@ The remaining shortcuts use Flow's current native bindings:
 - Submit: `Enter` (tap) or `Command+Enter` (long press)
 - Hub back/forward: `Command+[` / `Command+]`
 
-### 2. Codex — cyan
+### 2. CODEX — cyan
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -60,7 +60,7 @@ Because the MacroPad cannot read app state from macOS, the pulse tracks button
 presses rather than querying Wispr Flow or Codex. If a mode is stopped elsewhere,
 press its mode button or `ESC` once to synchronize the indicator.
 
-### 3. Town — orange
+### 3. TOWN — orange
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -72,7 +72,7 @@ press its mode button or `ESC` once to synchronize the indicator.
 `QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `SECT` sends `Option+S`,
 and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
-### 4. Media — green
+### 4. MEDIA — green
 
 | Left | Middle | Right |
 |------|--------|-------|

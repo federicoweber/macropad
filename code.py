@@ -43,7 +43,7 @@ def set_profile(profile_index):
     title = "{}/{}  {}".format(
         profile_index + 1, len(PROFILES), profile["name"]
     )
-    display_lines[0].text = "{:<21}".format(title)
+    display_lines[0].text = "{:<21}".format(title.upper())
 
     for row in range(4):
         first = row * 3

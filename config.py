@@ -58,7 +58,7 @@ def navigation_pad():
 
 PROFILES = (
     {
-        "name": "Wispr Flow",
+        "name": "WISPR FLOW",
         "color": (132, 62, 255),
         "keys": (
             # User-configured Flow push-to-talk shortcut.
