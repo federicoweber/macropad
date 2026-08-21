@@ -106,7 +106,8 @@ a three-band visualizer. The columns represent bass, mid, and treble, and each
 four-spot bar grows upward from the bottom in time with Spotify's actual audio.
 The bars transition from green at the bottom through yellow and orange to red
 at the top. The default reduced gain keeps typical tracks from saturating the
-full columns.
+full columns. When playback stops, all 12 keys return to steady white at the
+normal profile brightness.
 
 Automatic pausing starts unlinked after boot, so the button initially shows
 `LINK`. Press it to enable the behavior; the label changes to `UNLNK`, which

@@ -250,6 +250,8 @@ def service_long_presses():
 
 def service_mode_indicator(last_update):
     """Pulse all key LEDs while an app mode is locally marked active."""
+    global media_visualizer_active
+
     now = time.monotonic()
     if now - last_update < PULSE_UPDATE_SECONDS:
         return last_update
@@ -259,6 +261,7 @@ def service_mode_indicator(last_update):
         and playback_is_active(spotify_playback)
     )
     if media_playing:
+        media_visualizer_active = True
         macropad.pixels.brightness = PIXEL_BRIGHTNESS
         levels = spotify_audio_levels
         if now - last_spotify_level_update > SPOTIFY_LEVEL_STALE_SECONDS:
@@ -270,12 +273,18 @@ def service_mode_indicator(last_update):
             macropad.pixels[index] = (
                 row_color if illuminated else dim(row_color, 0.06)
             )
-    elif active_mode_indicators or held_pulse_indicators:
+    else:
+        if media_visualizer_active:
+            media_visualizer_active = False
+            if PROFILES[active_profile]["name"] == "MEDIA":
+                macropad.pixels.fill(PROFILES[active_profile]["color"])
+
+    if not media_playing and (active_mode_indicators or held_pulse_indicators):
         phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS
         triangle = 1.0 - abs((phase * 2.0) - 1.0)
         factor = PULSE_MIN_FACTOR + ((1.0 - PULSE_MIN_FACTOR) * triangle)
         macropad.pixels.brightness = PIXEL_BRIGHTNESS * factor
-    else:
+    elif not media_playing:
         macropad.pixels.brightness = PIXEL_BRIGHTNESS
 
     return now
@@ -402,6 +411,7 @@ last_spotify_update = 0.0
 last_spotify_level_update = 0.0
 media_info_enabled = True
 media_scroll_step = 0
+media_visualizer_active = False
 active_profile = 0
 encoder_navigation_active = False
 last_encoder_position = macropad.encoder
