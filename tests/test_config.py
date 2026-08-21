@@ -7,9 +7,10 @@ from config import (
     ENCODER_PRESSED_LEFT_KEYS,
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
+    MEDIA_VISUALIZER_ATTACK,
     MEDIA_VISUALIZER_GAIN,
+    MEDIA_VISUALIZER_RELEASE,
     MEDIA_VISUALIZER_ROW_COLORS,
-    MEDIA_VISUALIZER_UNLIT_FACTOR,
     PROFILES,
     PULSE_PERIOD_SECONDS,
     validate_profiles,
@@ -42,7 +43,11 @@ class ProfileTests(unittest.TestCase):
 
     def test_media_visualizer_uses_reduced_gain(self):
         self.assertEqual(MEDIA_VISUALIZER_GAIN, 0.80)
-        self.assertEqual(MEDIA_VISUALIZER_UNLIT_FACTOR, 0.30)
+
+    def test_media_visualizer_fades_in_and_out(self):
+        self.assertEqual(MEDIA_VISUALIZER_ATTACK, 0.35)
+        self.assertEqual(MEDIA_VISUALIZER_RELEASE, 0.12)
+        self.assertGreater(MEDIA_VISUALIZER_ATTACK, MEDIA_VISUALIZER_RELEASE)
 
     def test_media_visualizer_transitions_from_green_to_red(self):
         self.assertEqual(MEDIA_VISUALIZER_ROW_COLORS[-1], (0, 255, 48))

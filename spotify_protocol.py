@@ -144,6 +144,33 @@ def equalizer_pixels(levels, gain=1.0):
     )
 
 
+def equalizer_intensities(levels, gain=1.0):
+    """Return a continuous 0..1 brightness for each spectrum spot."""
+    heights = tuple(
+        min(4.0, min(1.0, max(0.0, level * gain)) * 6.0)
+        for level in levels
+    )
+    return tuple(
+        min(1.0, max(0.0, heights[column] - (3 - row)))
+        for row in range(4)
+        for column in range(3)
+    )
+
+
+def smooth_equalizer_intensities(current, target, attack, release):
+    """Ease spectrum spots toward their targets with independent decay."""
+    if len(current) != len(target):
+        raise ValueError("current and target intensities must have equal lengths")
+    smoothed = []
+    for current_value, target_value in zip(current, target):
+        factor = attack if target_value > current_value else release
+        value = current_value + ((target_value - current_value) * factor)
+        if target_value == 0.0 and value < 0.01:
+            value = 0.0
+        smoothed.append(value)
+    return tuple(smoothed)
+
+
 def pixel_index_for_key(key_index):
     """Map row-major key positions to the MacroPad's serpentine LEDs."""
     row, column = divmod(key_index, 3)

@@ -15,9 +15,10 @@ from config import (
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
+    MEDIA_VISUALIZER_ATTACK,
     MEDIA_VISUALIZER_GAIN,
+    MEDIA_VISUALIZER_RELEASE,
     MEDIA_VISUALIZER_ROW_COLORS,
-    MEDIA_VISUALIZER_UNLIT_FACTOR,
     MEDIA_SCROLL_UPDATE_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -32,13 +33,14 @@ from config import (
 from spotify_protocol import (
     DISPLAY_WIDTH,
     PlaybackPauseController,
-    equalizer_pixels,
+    equalizer_intensities,
     parse_audio_level_message,
     parse_message,
     pixel_index_for_key,
     playback_is_active,
     playback_display_rows,
     scrolling_display_text,
+    smooth_equalizer_intensities,
     transport_label,
 )
 
@@ -254,7 +256,7 @@ def service_long_presses():
 
 def service_mode_indicator(last_update):
     """Pulse all key LEDs while an app mode is locally marked active."""
-    global media_visualizer_active
+    global media_visualizer_active, media_visualizer_intensities
 
     now = time.monotonic()
     if now - last_update < PULSE_UPDATE_SECONDS:
@@ -270,18 +272,24 @@ def service_mode_indicator(last_update):
         levels = spotify_audio_levels
         if now - last_spotify_level_update > SPOTIFY_LEVEL_STALE_SECONDS:
             levels = (0.0, 0.0, 0.0)
-        for key_index, illuminated in enumerate(
-            equalizer_pixels(levels, MEDIA_VISUALIZER_GAIN)
-        ):
+        target_intensities = equalizer_intensities(
+            levels, MEDIA_VISUALIZER_GAIN
+        )
+        media_visualizer_intensities = smooth_equalizer_intensities(
+            media_visualizer_intensities,
+            target_intensities,
+            MEDIA_VISUALIZER_ATTACK,
+            MEDIA_VISUALIZER_RELEASE,
+        )
+        for key_index, intensity in enumerate(media_visualizer_intensities):
             row_color = MEDIA_VISUALIZER_ROW_COLORS[key_index // 3]
-            macropad.pixels[pixel_index_for_key(key_index)] = (
-                row_color
-                if illuminated
-                else dim(row_color, MEDIA_VISUALIZER_UNLIT_FACTOR)
+            macropad.pixels[pixel_index_for_key(key_index)] = dim(
+                row_color, intensity
             )
     else:
         if media_visualizer_active:
             media_visualizer_active = False
+            media_visualizer_intensities = (0.0,) * 12
             if PROFILES[active_profile]["name"] == "MEDIA":
                 macropad.pixels.fill(PROFILES[active_profile]["color"])
 
@@ -418,6 +426,7 @@ last_spotify_level_update = 0.0
 media_info_enabled = True
 media_scroll_step = 0
 media_visualizer_active = False
+media_visualizer_intensities = (0.0,) * 12
 active_profile = 0
 encoder_navigation_active = False
 last_encoder_position = macropad.encoder

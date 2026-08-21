@@ -7,6 +7,7 @@ from spotify_protocol import (
     build_audio_level_message,
     build_message,
     clean_field,
+    equalizer_intensities,
     equalizer_pixels,
     pixel_index_for_key,
     format_time,
@@ -15,6 +16,7 @@ from spotify_protocol import (
     playback_is_active,
     playback_display_rows,
     scrolling_display_text,
+    smooth_equalizer_intensities,
     transport_label,
 )
 
@@ -47,6 +49,23 @@ class SpotifyProtocolTests(unittest.TestCase):
         full_gain = equalizer_pixels((0.7, 0.7, 0.7))
         reduced_gain = equalizer_pixels((0.7, 0.7, 0.7), 0.80)
         self.assertGreater(sum(full_gain), sum(reduced_gain))
+
+    def test_equalizer_intensities_leave_untriggered_spots_off(self):
+        self.assertEqual(equalizer_intensities((0.0, 0.0, 0.0)), (0.0,) * 12)
+        intensities = equalizer_intensities((0.5, 0.5, 0.5))
+        self.assertEqual(intensities[:3], (0.0, 0.0, 0.0))
+        self.assertEqual(intensities[3:], (1.0,) * 9)
+
+    def test_equalizer_intensities_fade_with_attack_and_release(self):
+        faded_in = smooth_equalizer_intensities(
+            (0.0, 0.0), (1.0, 0.0), 0.35, 0.12
+        )
+        self.assertEqual(faded_in, (0.35, 0.0))
+        faded_out = smooth_equalizer_intensities(
+            faded_in, (0.0, 0.0), 0.35, 0.12
+        )
+        self.assertAlmostEqual(faded_out[0], 0.308)
+        self.assertEqual(faded_out[1], 0.0)
 
     def test_pixel_indices_follow_macropad_serpentine_rows(self):
         self.assertEqual(
