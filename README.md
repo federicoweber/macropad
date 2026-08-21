@@ -50,13 +50,14 @@ app, including `Command+Option+N` for quick chat and `Command+N` for a new chat.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `OPEN` Town spotlight | `SEND` Send | `ESC` Dismiss |
+| `OPEN` Town spotlight | `WIND` Town window | `ESC` Dismiss |
 | `@` Mention | `LINE` New line | `DEL` Delete mention |
-| `----` Unused | `UP` Up | `----` Unused |
+| `HOME` Home | `UP` Up | `FULL` Capture full screen |
 | `LEFT` Left | `DOWN` Down | `RGHT` Right |
 
-`OPEN` sends the user-configured `Option+T` global shortcut. The remaining keys
-use Town's native assistant composer and mention-autocomplete controls.
+`OPEN` sends `Option+T`, `WIND` sends `Option+Shift+T`, `HOME` sends `Option+H`,
+and `FULL` sends `Option+F`. The remaining keys use Town's native assistant
+composer and mention-autocomplete controls.
 
 ### 4. Music — green
 

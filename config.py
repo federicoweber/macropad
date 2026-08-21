@@ -73,14 +73,14 @@ PROFILES = (
         "keys": (
             # User-configured Town global spotlight shortcut.
             hotkey("OPEN", "OPTION", "T"),
-            hotkey("SEND", "ENTER"),
+            hotkey("WIND", "OPTION", "SHIFT", "T"),
             hotkey("ESC", "ESCAPE"),
             text("@", "@"),
             hotkey("LINE", "SHIFT", "ENTER"),
             hotkey("DEL", "BACKSPACE"),
-            unused(),
+            hotkey("HOME", "OPTION", "H"),
             hotkey("UP", "UP_ARROW"),
-            unused(),
+            hotkey("FULL", "OPTION", "F"),
             hotkey("LEFT", "LEFT_ARROW"),
             hotkey("DOWN", "DOWN_ARROW"),
             hotkey("RGHT", "RIGHT_ARROW"),

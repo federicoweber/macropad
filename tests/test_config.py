@@ -36,6 +36,12 @@ class ProfileTests(unittest.TestCase):
             [("LEFT_ARROW",), ("DOWN_ARROW",), ("RIGHT_ARROW",)],
         )
 
+    def test_town_native_global_shortcuts(self):
+        town = PROFILES[2]["keys"]
+        self.assertEqual(town[1]["keys"], ("OPTION", "SHIFT", "T"))
+        self.assertEqual(town[6]["keys"], ("OPTION", "H"))
+        self.assertEqual(town[8]["keys"], ("OPTION", "F"))
+
     def test_flow_hands_free_double_taps_ptt(self):
         hands_free = PROFILES[0]["keys"][1]
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
