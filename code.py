@@ -6,6 +6,8 @@ from adafruit_macropad import MacroPad
 
 from config import (
     DOUBLE_TAP_GAP_SECONDS,
+    ENCODER_PRESSED_LEFT_KEYS,
+    ENCODER_PRESSED_RIGHT_KEYS,
     LONG_PRESS_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -59,6 +61,13 @@ def set_profile(profile_index):
 def tap_hotkey(names):
     """Send one keyboard chord."""
     macropad.keyboard.send(*resolve_keycodes(names))
+
+
+def send_encoder_navigation(delta):
+    """Send one Control+Arrow chord per pressed encoder step."""
+    keys = ENCODER_PRESSED_RIGHT_KEYS if delta > 0 else ENCODER_PRESSED_LEFT_KEYS
+    for _ in range(abs(delta)):
+        tap_hotkey(keys)
 
 
 def press_key(index):
@@ -166,8 +175,11 @@ while True:
         macropad.keyboard.release_all()
         held_keycodes.clear()
         pending_long_presses.clear()
-        active_profile = (active_profile + encoder_delta) % len(PROFILES)
         last_encoder_position = encoder_position
-        set_profile(active_profile)
+        if macropad.encoder_switch:
+            send_encoder_navigation(encoder_delta)
+        else:
+            active_profile = (active_profile + encoder_delta) % len(PROFILES)
+            set_profile(active_profile)
 
     time.sleep(0.005)

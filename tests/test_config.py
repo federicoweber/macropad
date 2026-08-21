@@ -2,7 +2,12 @@
 
 import unittest
 
-from config import PROFILES, validate_profiles
+from config import (
+    ENCODER_PRESSED_LEFT_KEYS,
+    ENCODER_PRESSED_RIGHT_KEYS,
+    PROFILES,
+    validate_profiles,
+)
 
 
 class ProfileTests(unittest.TestCase):
@@ -29,6 +34,16 @@ class ProfileTests(unittest.TestCase):
     def test_every_profile_matches_physical_board(self):
         for profile in PROFILES:
             self.assertEqual(len(profile["keys"]), 12)
+
+    def test_pressed_encoder_navigation_shortcuts(self):
+        self.assertEqual(
+            ENCODER_PRESSED_LEFT_KEYS,
+            ("CONTROL", "LEFT_ARROW"),
+        )
+        self.assertEqual(
+            ENCODER_PRESSED_RIGHT_KEYS,
+            ("CONTROL", "RIGHT_ARROW"),
+        )
 
     def test_user_shortcut_overrides(self):
         flow_ptt = PROFILES[0]["keys"][0]
