@@ -84,7 +84,7 @@ PROFILES = (
         "name": "CODEX",
         "color": (255, 255, 255),
         "keys": (
-            hotkey("FOCUS", "CONTROL", "THREE"),
+            hotkey("CMD", "COMMAND", "SHIFT", "P"),
             {
                 "label": "VOICE",
                 "action": "tap_hotkey",
@@ -98,7 +98,7 @@ PROFILES = (
                 "mode_clear": ("codex_voice",),
             },
             enter_key(),
-            hotkey("CMD", "COMMAND", "SHIFT", "P"),
+            hotkey("NEW", "COMMAND", "N"),
             hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
         ) + navigation_pad(),
     },
