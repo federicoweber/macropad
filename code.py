@@ -64,7 +64,7 @@ def set_profile(profile_index):
 
 
 def show_encoder_navigation():
-    """Replace the OLED keymap with large ringed navigation chevrons."""
+    """Replace the OLED keymap with large navigation chevrons."""
     board.DISPLAY.root_group = encoder_navigation_group
 
 
@@ -162,26 +162,7 @@ display_lines[0].color = 0x000000
 display_lines[0].background_color = 0xFFFFFF
 encoder_navigation_palette = displayio.Palette(1)
 encoder_navigation_palette[0] = 0xFFFFFF
-encoder_navigation_background = displayio.Palette(1)
-encoder_navigation_background[0] = 0x000000
 encoder_navigation_group = displayio.Group()
-for center_x in (32, 96):
-    encoder_navigation_group.append(
-        vectorio.Circle(
-            pixel_shader=encoder_navigation_palette,
-            radius=29,
-            x=center_x,
-            y=32,
-        )
-    )
-    encoder_navigation_group.append(
-        vectorio.Circle(
-            pixel_shader=encoder_navigation_background,
-            radius=26,
-            x=center_x,
-            y=32,
-        )
-    )
 encoder_navigation_group.append(
     vectorio.Polygon(
         pixel_shader=encoder_navigation_palette,
