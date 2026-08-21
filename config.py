@@ -58,8 +58,14 @@ PROFILES = (
                 "label": "FREE",
                 "action": "double_tap_hotkey",
                 "keys": ("OPTION", "W"),
+                "mode_toggle": "flow_free",
             },
-            hotkey("ESC", "ESCAPE"),
+            {
+                "label": "ESC",
+                "action": "tap_hotkey",
+                "keys": ("ESCAPE",),
+                "mode_clear": ("flow_free",),
+            },
             tap_or_long_hotkey(
                 "ENTER",
                 ("ENTER",),
@@ -74,8 +80,18 @@ PROFILES = (
         "color": (0, 174, 239),
         "keys": (
             hotkey("FOCUS", "CONTROL", "THREE"),
-            hotkey("VOICE", "OPTION", "C"),
-            hotkey("ESC", "ESCAPE"),
+            {
+                "label": "VOICE",
+                "action": "tap_hotkey",
+                "keys": ("OPTION", "C"),
+                "mode_toggle": "codex_voice",
+            },
+            {
+                "label": "ESC",
+                "action": "tap_hotkey",
+                "keys": ("ESCAPE",),
+                "mode_clear": ("codex_voice",),
+            },
             hotkey("CMD", "COMMAND", "SHIFT", "P"),
             hotkey("NEW", "COMMAND", "N"),
             hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
@@ -118,6 +134,9 @@ PIXEL_BRIGHTNESS = 0.14
 PRESS_BRIGHTNESS = 2.25
 DOUBLE_TAP_GAP_SECONDS = 0.12
 LONG_PRESS_SECONDS = 0.5
+PULSE_PERIOD_SECONDS = 1.5
+PULSE_MIN_FACTOR = 0.25
+PULSE_UPDATE_SECONDS = 0.03
 
 
 def validate_profiles(profiles=PROFILES):

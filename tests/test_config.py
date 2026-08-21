@@ -64,6 +64,15 @@ class ProfileTests(unittest.TestCase):
         hands_free = PROFILES[0]["keys"][1]
         self.assertEqual(hands_free["action"], "double_tap_hotkey")
         self.assertEqual(hands_free["keys"], ("OPTION", "W"))
+        self.assertEqual(hands_free["mode_toggle"], "flow_free")
+
+    def test_conversation_modes_control_pulse_indicator(self):
+        flow = PROFILES[0]["keys"]
+        codex = PROFILES[1]["keys"]
+
+        self.assertEqual(flow[2]["mode_clear"], ("flow_free",))
+        self.assertEqual(codex[1]["mode_toggle"], "codex_voice")
+        self.assertEqual(codex[2]["mode_clear"], ("codex_voice",))
 
     def test_flow_profile_matches_requested_layout(self):
         flow = PROFILES[0]["keys"]

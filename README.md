@@ -16,6 +16,11 @@ Hold the board upright with the OLED and encoder above the keys.
 The bottom two rows are a shared navigation pad in W. Flow, Codex, and Town.
 Music keeps its dedicated media controls.
 
+The full key backlight smoothly pulses while W. Flow hands-free mode or Codex
+Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
+press that profile's `ESC` to clear it. The indicator remains visible when the
+encoder switches profiles.
+
 ### 1. W. Flow — purple
 
 | Left | Middle | Right |
@@ -49,6 +54,10 @@ The remaining shortcuts use Flow's current native bindings:
 `FOCUS` sends `Control+3` to switch the desktop app to Codex. The command menu,
 new chat, terminal, and back/forward actions use Codex's native shortcuts. The
 final two rows provide the shared navigation pad.
+
+Because the MacroPad cannot read app state from macOS, the pulse tracks button
+presses rather than querying W. Flow or Codex. If a mode is stopped elsewhere,
+press its mode button or `ESC` once to synchronize the indicator.
 
 ### 3. Town — orange
 

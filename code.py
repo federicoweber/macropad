@@ -10,6 +10,9 @@ from config import (
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
     PROFILES,
+    PULSE_MIN_FACTOR,
+    PULSE_PERIOD_SECONDS,
+    PULSE_UPDATE_SECONDS,
     validate_profiles,
 )
 
@@ -81,6 +84,16 @@ def press_key(index):
     elif action == "type_text":
         macropad.keyboard_layout.write(binding["text"])
 
+    mode_toggle = binding.get("mode_toggle")
+    if mode_toggle:
+        if mode_toggle in active_mode_indicators:
+            active_mode_indicators.pop(mode_toggle)
+        else:
+            active_mode_indicators[mode_toggle] = True
+
+    for mode_name in binding.get("mode_clear", ()):
+        active_mode_indicators.pop(mode_name, None)
+
 
 def release_key(index):
     """Release held chords and restore the profile color."""
@@ -102,6 +115,23 @@ def service_long_presses():
             tap_hotkey(binding["long_keys"])
 
 
+def service_mode_indicator(last_update):
+    """Pulse all key LEDs while an app mode is locally marked active."""
+    now = time.monotonic()
+    if now - last_update < PULSE_UPDATE_SECONDS:
+        return last_update
+
+    if active_mode_indicators:
+        phase = (now % PULSE_PERIOD_SECONDS) / PULSE_PERIOD_SECONDS
+        triangle = 1.0 - abs((phase * 2.0) - 1.0)
+        factor = PULSE_MIN_FACTOR + ((1.0 - PULSE_MIN_FACTOR) * triangle)
+        macropad.pixels.brightness = PIXEL_BRIGHTNESS * factor
+    else:
+        macropad.pixels.brightness = PIXEL_BRIGHTNESS
+
+    return now
+
+
 configuration_errors = validate_profiles()
 if configuration_errors:
     raise ValueError("; ".join(configuration_errors))
@@ -110,8 +140,10 @@ macropad.pixels.brightness = PIXEL_BRIGHTNESS
 display_lines = macropad.display_text()
 held_keycodes = {}
 pending_long_presses = {}
+active_mode_indicators = {}
 active_profile = 0
 last_encoder_position = macropad.encoder
+last_pulse_update = 0.0
 set_profile(active_profile)
 
 while True:
@@ -123,6 +155,7 @@ while True:
             release_key(key_event.key_number)
 
     service_long_presses()
+    last_pulse_update = service_mode_indicator(last_pulse_update)
 
     encoder_position = macropad.encoder
     encoder_delta = encoder_position - last_encoder_position
