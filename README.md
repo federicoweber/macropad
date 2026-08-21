@@ -39,13 +39,13 @@ The remaining shortcuts use Flow's current native bindings:
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `QCK` Quick chat | `NEW` New chat | `SRCH` Search chats |
-| `PREV` Previous chat | `NEXT` Next chat | `FIND` Find in chat |
-| `RVW` Review tab | `TERM` Terminal | `SIDE` Sidebar |
-| `CMD` Command menu | `BACK` Navigate back | `FWD` Navigate forward |
+| `CMD` Command menu | `VOICE` Dictation | `ESC` Dismiss |
+| `BACK` Navigate back | `FWD` Navigate forward | `ENTER` Submit |
+| `NEW` New chat | `TERM` Terminal | `SIDE` Sidebar |
+| `----` Unused | `----` Unused | `----` Unused |
 
 These use the native shortcuts documented for the current ChatGPT/Codex desktop
-app, including `Command+Option+N` for quick chat and `Command+N` for a new chat.
+app, including `Control+Shift+D` for dictation and `Command+N` for a new chat.
 
 ### 3. Town — orange
 

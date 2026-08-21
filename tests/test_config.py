@@ -57,10 +57,23 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(enter["label"], "ENTER")
         self.assertEqual(enter["keys"], ("ENTER",))
 
-    def test_codex_profile_uses_native_new_and_search_shortcuts(self):
+    def test_codex_profile_matches_requested_layout(self):
         codex = PROFILES[1]["keys"]
-        self.assertEqual(codex[1]["keys"], ("COMMAND", "N"))
-        self.assertEqual(codex[2]["keys"], ("COMMAND", "G"))
+        self.assertEqual(
+            [binding["label"] for binding in codex],
+            [
+                "CMD", "VOICE", "ESC",
+                "BACK", "FWD", "ENTER",
+                "NEW", "TERM", "SIDE",
+                "----", "----", "----",
+            ],
+        )
+        self.assertEqual(codex[0]["keys"], ("COMMAND", "SHIFT", "P"))
+        self.assertEqual(codex[1]["keys"], ("CONTROL", "SHIFT", "D"))
+        self.assertEqual(codex[3]["keys"], ("COMMAND", "LEFT_BRACKET"))
+        self.assertEqual(codex[4]["keys"], ("COMMAND", "RIGHT_BRACKET"))
+        self.assertEqual(codex[6]["keys"], ("COMMAND", "N"))
+        self.assertTrue(all(binding["action"] == "noop" for binding in codex[9:]))
 
     def test_music_profile_uses_consumer_controls(self):
         music = PROFILES[3]["keys"]
