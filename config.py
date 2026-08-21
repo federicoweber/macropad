@@ -145,12 +145,12 @@ PULSE_UPDATE_SECONDS = 0.03
 ENCODER_PRESSED_LEFT_KEYS = ("CONTROL", "LEFT_ARROW")
 ENCODER_PRESSED_RIGHT_KEYS = ("CONTROL", "RIGHT_ARROW")
 ENCODER_LEFT_ARROW_POINTS = (
-    (6, 32), (30, 10), (30, 23), (56, 23),
-    (56, 41), (30, 41), (30, 54),
+    (43, 11), (17, 32), (43, 53),
+    (43, 40), (32, 32), (43, 24),
 )
 ENCODER_RIGHT_ARROW_POINTS = (
-    (122, 32), (98, 10), (98, 23), (72, 23),
-    (72, 41), (98, 41), (98, 54),
+    (85, 11), (111, 32), (85, 53),
+    (85, 40), (96, 32), (85, 24),
 )
 
 
