@@ -104,7 +104,7 @@ PROFILES = (
     },
     {
         "name": "TOWN",
-        "color": (0, 180, 160),
+        "color": (0, 190, 120),
         "keys": (
             # User-configured Town global spotlight shortcut.
             hotkey("QUICK", "OPTION", "T"),
@@ -117,7 +117,7 @@ PROFILES = (
     },
     {
         "name": "MEDIA",
-        "color": (255, 139, 44),
+        "color": (255, 80, 0),
         "keys": (
             consumer("PREV", "SCAN_PREVIOUS_TRACK"),
             consumer("PLAY", "PLAY_PAUSE"),
