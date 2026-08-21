@@ -20,19 +20,20 @@ Music keeps its dedicated media controls.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `PTT` Push to talk | `FREE` Hands-free | `ENTER` Submit |
-| `CANC` Cancel | `PAST` Paste last | `COPY` Copy last |
+| `PTT` Push to talk | `FREE` Hands-free | `ESC` Cancel/dismiss |
+| `ENTER` Submit | `COPY` Copy last | `PASTE` Paste last |
 | `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `PTT` holds `Option+W`, matching the user-configured Flow shortcut. `FREE`
-double-taps the same shortcut, which Flow interprets as hands-free mode.
+double-taps the same shortcut, which Flow interprets as hands-free mode. A quick
+press on `ENTER` sends `Enter`; holding it for 0.5 seconds sends `Command+Enter`.
 
 The remaining shortcuts use Flow's current native bindings:
 
 - Cancel: `Escape`
 - Paste/copy last transcript: `Command+Control+V/C`
-- Submit: `Enter`
+- Submit: `Enter` (tap) or `Command+Enter` (long press)
 - Hub back/forward: `Command+[` / `Command+]`
 
 ### 2. Codex — cyan
@@ -118,6 +119,7 @@ Supported actions are:
 - `hold_hotkey`: hold a chord until the physical key is released
 - `tap_hotkey`: tap a chord once
 - `double_tap_hotkey`: tap a chord twice
+- `tap_or_long_hotkey`: send different chords for a tap and a long press
 - `consumer`: send a USB media-control code
 - `type_text`: type literal text
 - `noop`: intentionally leave a key unused

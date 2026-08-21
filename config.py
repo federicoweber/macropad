@@ -10,6 +10,16 @@ def hotkey(label, *keys, hold=False):
     }
 
 
+def tap_or_long_hotkey(label, tap_keys, long_keys):
+    """Create a binding with distinct short- and long-press chords."""
+    return {
+        "label": label,
+        "action": "tap_or_long_hotkey",
+        "tap_keys": tap_keys,
+        "long_keys": long_keys,
+    }
+
+
 def consumer(label, code):
     """Create a USB consumer-control binding."""
     return {"label": label, "action": "consumer", "code": code}
@@ -49,10 +59,14 @@ PROFILES = (
                 "action": "double_tap_hotkey",
                 "keys": ("OPTION", "W"),
             },
-            hotkey("ENTER", "ENTER"),
-            hotkey("CANC", "ESCAPE"),
-            hotkey("PAST", "COMMAND", "CONTROL", "V"),
+            hotkey("ESC", "ESCAPE"),
+            tap_or_long_hotkey(
+                "ENTER",
+                ("ENTER",),
+                ("COMMAND", "ENTER"),
+            ),
             hotkey("COPY", "COMMAND", "CONTROL", "C"),
+            hotkey("PASTE", "COMMAND", "CONTROL", "V"),
         ) + navigation_pad(),
     },
     {
@@ -103,6 +117,7 @@ PROFILES = (
 PIXEL_BRIGHTNESS = 0.14
 PRESS_BRIGHTNESS = 2.25
 DOUBLE_TAP_GAP_SECONDS = 0.12
+LONG_PRESS_SECONDS = 0.5
 
 
 def validate_profiles(profiles=PROFILES):
@@ -111,6 +126,7 @@ def validate_profiles(profiles=PROFILES):
     valid_actions = (
         "hold_hotkey",
         "tap_hotkey",
+        "tap_or_long_hotkey",
         "double_tap_hotkey",
         "consumer",
         "type_text",
@@ -150,6 +166,11 @@ def validate_profiles(profiles=PROFILES):
             if action in ("hold_hotkey", "tap_hotkey", "double_tap_hotkey"):
                 if not binding.get("keys"):
                     errors.append("{} must define keys".format(key_prefix))
+            if action == "tap_or_long_hotkey":
+                if not binding.get("tap_keys"):
+                    errors.append("{} must define tap_keys".format(key_prefix))
+                if not binding.get("long_keys"):
+                    errors.append("{} must define long_keys".format(key_prefix))
             if action == "consumer" and not binding.get("code"):
                 errors.append("{} must define code".format(key_prefix))
             if action == "type_text" and not binding.get("text"):

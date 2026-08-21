@@ -6,6 +6,7 @@ from adafruit_macropad import MacroPad
 
 from config import (
     DOUBLE_TAP_GAP_SECONDS,
+    LONG_PRESS_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
     PROFILES,
@@ -66,6 +67,8 @@ def press_key(index):
         keycodes = resolve_keycodes(binding["keys"])
         held_keycodes[index] = keycodes
         macropad.keyboard.press(*keycodes)
+    elif action == "tap_or_long_hotkey":
+        pending_long_presses[index] = (time.monotonic(), binding)
     elif action == "tap_hotkey":
         tap_hotkey(binding["keys"])
     elif action == "double_tap_hotkey":
@@ -81,9 +84,22 @@ def press_key(index):
 
 def release_key(index):
     """Release held chords and restore the profile color."""
+    pending = pending_long_presses.pop(index, None)
+    if pending:
+        tap_hotkey(pending[1]["tap_keys"])
     if index in held_keycodes:
         macropad.keyboard.release(*held_keycodes.pop(index))
     macropad.pixels[index] = PROFILES[active_profile]["color"]
+
+
+def service_long_presses():
+    """Fire each long-press chord once when its threshold is reached."""
+    now = time.monotonic()
+    for index in tuple(pending_long_presses):
+        started_at, binding = pending_long_presses[index]
+        if now - started_at >= LONG_PRESS_SECONDS:
+            pending_long_presses.pop(index)
+            tap_hotkey(binding["long_keys"])
 
 
 configuration_errors = validate_profiles()
@@ -93,6 +109,7 @@ if configuration_errors:
 macropad.pixels.brightness = PIXEL_BRIGHTNESS
 display_lines = macropad.display_text()
 held_keycodes = {}
+pending_long_presses = {}
 active_profile = 0
 last_encoder_position = macropad.encoder
 set_profile(active_profile)
@@ -105,11 +122,14 @@ while True:
         else:
             release_key(key_event.key_number)
 
+    service_long_presses()
+
     encoder_position = macropad.encoder
     encoder_delta = encoder_position - last_encoder_position
     if encoder_delta:
         macropad.keyboard.release_all()
         held_keycodes.clear()
+        pending_long_presses.clear()
         active_profile = (active_profile + encoder_delta) % len(PROFILES)
         last_encoder_position = encoder_position
         set_profile(active_profile)

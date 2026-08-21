@@ -70,13 +70,16 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(
             [binding["label"] for binding in flow],
             [
-                "PTT", "FREE", "ENTER",
-                "CANC", "PAST", "COPY",
+                "PTT", "FREE", "ESC",
+                "ENTER", "COPY", "PASTE",
                 "BACK", "UP", "FWD",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
-        self.assertEqual(flow[2]["keys"], ("ENTER",))
+        self.assertEqual(flow[2]["keys"], ("ESCAPE",))
+        self.assertEqual(flow[3]["action"], "tap_or_long_hotkey")
+        self.assertEqual(flow[3]["tap_keys"], ("ENTER",))
+        self.assertEqual(flow[3]["long_keys"], ("COMMAND", "ENTER"))
 
     def test_codex_profile_matches_requested_layout(self):
         codex = PROFILES[1]["keys"]
