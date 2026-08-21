@@ -15,6 +15,17 @@ class ProfileTests(unittest.TestCase):
             ["WISPR FLOW", "CODEX", "TOWN", "MEDIA"],
         )
 
+    def test_profile_colors(self):
+        self.assertEqual(
+            [profile["color"] for profile in PROFILES],
+            [
+                (132, 62, 255),
+                (255, 255, 255),
+                (0, 180, 160),
+                (255, 139, 44),
+            ],
+        )
+
     def test_every_profile_matches_physical_board(self):
         for profile in PROFILES:
             self.assertEqual(len(profile["keys"]), 12)
