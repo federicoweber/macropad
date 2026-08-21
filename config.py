@@ -59,12 +59,12 @@ PROFILES = (
         "name": "CODEX",
         "color": (0, 174, 239),
         "keys": (
-            hotkey("CMD", "COMMAND", "SHIFT", "P"),
+            hotkey("FOCUS", "CONTROL", "THREE"),
             hotkey("VOICE", "OPTION", "C"),
             hotkey("ESC", "ESCAPE"),
-            hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
-            hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
-            hotkey("ENTER", "ENTER"),
+            hotkey("CMD", "COMMAND", "SHIFT", "P"),
+            hotkey("NEW", "COMMAND", "N"),
+            hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
         ) + navigation_pad(),
     },
     {

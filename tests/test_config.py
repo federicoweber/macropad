@@ -83,16 +83,17 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(
             [binding["label"] for binding in codex],
             [
-                "CMD", "VOICE", "ESC",
-                "BACK", "FWD", "ENTER",
+                "FOCUS", "VOICE", "ESC",
+                "CMD", "NEW", "TERM",
                 "BACK", "UP", "FWD",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
-        self.assertEqual(codex[0]["keys"], ("COMMAND", "SHIFT", "P"))
+        self.assertEqual(codex[0]["keys"], ("CONTROL", "THREE"))
         self.assertEqual(codex[1]["keys"], ("OPTION", "C"))
-        self.assertEqual(codex[3]["keys"], ("COMMAND", "LEFT_BRACKET"))
-        self.assertEqual(codex[4]["keys"], ("COMMAND", "RIGHT_BRACKET"))
+        self.assertEqual(codex[3]["keys"], ("COMMAND", "SHIFT", "P"))
+        self.assertEqual(codex[4]["keys"], ("COMMAND", "N"))
+        self.assertEqual(codex[5]["keys"], ("CONTROL", "GRAVE_ACCENT"))
         self.assertEqual(codex[7]["keys"], ("UP_ARROW",))
 
     def test_music_profile_uses_consumer_controls(self):

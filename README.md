@@ -39,13 +39,14 @@ The remaining shortcuts use Flow's current native bindings:
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `CMD` Command menu | `VOICE` Voice Mode | `ESC` Dismiss |
-| `BACK` Navigate back | `FWD` Navigate forward | `ENTER` Submit |
+| `FOCUS` Switch to Codex | `VOICE` Voice Mode | `ESC` Dismiss |
+| `CMD` Command menu | `NEW` New chat | `TERM` Terminal |
 | `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `VOICE` sends `Option+C`, matching the user-verified Codex Voice Mode shortcut.
-The command menu and back/forward actions use Codex's native shortcuts. The
+`FOCUS` sends `Control+3` to switch the desktop app to Codex. The command menu,
+new chat, terminal, and back/forward actions use Codex's native shortcuts. The
 final two rows provide the shared navigation pad.
 
 ### 3. Town — orange
