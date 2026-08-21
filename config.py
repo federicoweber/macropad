@@ -132,7 +132,7 @@ PROFILES = (
             consumer("VOL-", "VOLUME_DECREMENT"),
             consumer("MUTE", "MUTE"),
             consumer("VOL+", "VOLUME_INCREMENT"),
-            {"label": "UNLNK", "action": "toggle_auto_pause"},
+            {"label": "LINK", "action": "toggle_auto_pause"},
             hotkey("UP", "UP_ARROW"),
             {"label": "INFO", "action": "toggle_media_display"},
             hotkey("LEFT", "LEFT_ARROW"),

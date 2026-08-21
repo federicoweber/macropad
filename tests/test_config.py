@@ -165,7 +165,7 @@ class ProfileTests(unittest.TestCase):
             [
                 "PREV", "PLAY", "NEXT",
                 "VOL-", "MUTE", "VOL+",
-                "UNLNK", "UP", "INFO",
+                "LINK", "UP", "INFO",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )

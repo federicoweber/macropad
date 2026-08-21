@@ -103,8 +103,9 @@ and returns to `PLAY` otherwise.
 While Spotify is playing and Media is selected, the complete orange key set
 uses the same breathing animation as the Wispr Flow and Codex active modes.
 
-`UNLNK` means automatic pausing is currently linked to voice modes; press it to
-disable the behavior. The label then changes to `LINK`, which re-enables it.
+Automatic pausing starts unlinked after boot, so the button initially shows
+`LINK`. Press it to enable the behavior; the label changes to `UNLNK`, which
+disables it again.
 
 ## Spotify now playing
 
