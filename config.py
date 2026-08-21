@@ -116,7 +116,7 @@ PROFILES = (
         ) + navigation_pad(),
     },
     {
-        "name": "MUSIC",
+        "name": "MEDIA",
         "color": (61, 214, 123),
         "keys": (
             consumer("PREV", "SCAN_PREVIOUS_TRACK"),

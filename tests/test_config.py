@@ -12,7 +12,7 @@ class ProfileTests(unittest.TestCase):
     def test_expected_profiles_exist(self):
         self.assertEqual(
             [profile["name"] for profile in PROFILES],
-            ["W. Flow", "CODEX", "TOWN", "MUSIC"],
+            ["W. Flow", "CODEX", "TOWN", "MEDIA"],
         )
 
     def test_every_profile_matches_physical_board(self):
@@ -27,7 +27,7 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(flow_ptt["keys"], ("OPTION", "W"))
         self.assertEqual(town_open["keys"], ("OPTION", "T"))
 
-    def test_non_music_profiles_share_navigation_pad(self):
+    def test_non_media_profiles_share_navigation_pad(self):
         expected_labels = ["BACK", "UP", "FWD", "LEFT", "DOWN", "RIGHT"]
         expected_keys = [
             ("COMMAND", "LEFT_BRACKET"),
@@ -49,7 +49,7 @@ class ProfileTests(unittest.TestCase):
                 expected_keys,
             )
 
-    def test_non_music_profiles_share_enter_position(self):
+    def test_non_media_profiles_share_enter_position(self):
         for profile in PROFILES[:3]:
             enter = profile["keys"][3]
             self.assertEqual(enter["label"], "ENTER")
@@ -114,10 +114,10 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(codex[5]["keys"], ("CONTROL", "GRAVE_ACCENT"))
         self.assertEqual(codex[7]["keys"], ("UP_ARROW",))
 
-    def test_music_profile_uses_consumer_controls(self):
-        music = PROFILES[3]["keys"]
+    def test_media_profile_uses_consumer_controls(self):
+        media = PROFILES[3]["keys"]
         self.assertEqual(
-            [binding["code"] for binding in music[:3]],
+            [binding["code"] for binding in media[:3]],
             ["SCAN_PREVIOUS_TRACK", "PLAY_PAUSE", "SCAN_NEXT_TRACK"],
         )
 

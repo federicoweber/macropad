@@ -4,7 +4,7 @@ Profile-based CircuitPython firmware for the [Adafruit MacroPad RP2040 Starter
 Kit](https://www.adafruit.com/product/5128), designed for an AI-heavy macOS
 workflow.
 
-Turn the encoder to switch between W. Flow, Codex, Town, and Music. The OLED shows
+Turn the encoder to switch between W. Flow, Codex, Town, and Media. The OLED shows
 the active profile in an inverted title bar and its 3×4 keymap, while all 12
 NeoPixels change to the profile color. The firmware appears to macOS as a
 standard USB keyboard and media controller; it does not require a desktop helper.
@@ -14,7 +14,7 @@ standard USB keyboard and media controller; it does not require a desktop helper
 Hold the board upright with the OLED and encoder above the keys.
 
 The bottom two rows are a shared navigation pad in W. Flow, Codex, and Town.
-Music keeps its dedicated media controls.
+Media keeps its dedicated controls.
 
 The full key backlight smoothly pulses while W. Flow hands-free mode or Codex
 Voice Mode is locally marked active. Press `FREE` or `VOICE` to toggle its mode;
@@ -72,7 +72,7 @@ press its mode button or `ESC` once to synchronize the indicator.
 `QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `SECT` sends `Option+S`,
 and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
-### 4. Music — green
+### 4. Media — green
 
 | Left | Middle | Right |
 |------|--------|-------|
@@ -81,7 +81,7 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 | `VOL-` Volume down | `MUTE` Mute | `VOL+` Volume up |
 | `DIM` Brightness down | `----` Unused | `BRIT` Brightness up |
 
-Music uses native USB consumer-control commands and works without app-specific
+Media uses native USB consumer-control commands and works without app-specific
 configuration.
 
 ## Install
