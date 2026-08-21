@@ -1,16 +1,15 @@
-"""AI-focused firmware for the Adafruit MacroPad RP2040."""
+"""Profile-based AI firmware for the Adafruit MacroPad RP2040."""
 
 import time
 
 from adafruit_macropad import MacroPad
 
 from config import (
-    KEYMAP,
+    DOUBLE_TAP_GAP_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
-    ROW_TITLES,
-    SPOTLIGHT_DELAY_SECONDS,
-    validate_keymap,
+    PROFILES,
+    validate_profiles,
 )
 
 
@@ -34,62 +33,69 @@ def brighten(color):
     return tuple(min(255, int(channel * PRESS_BRIGHTNESS)) for channel in color)
 
 
-def show_layout():
-    """Render one compact line for each physical key row."""
-    lines = macropad.display_text(title="AI MACROPAD")
-    for row, title in enumerate(ROW_TITLES):
+def set_profile(profile_index):
+    """Update the OLED and LEDs for the selected profile."""
+    profile = PROFILES[profile_index]
+    display_lines[0].text = "{}/{}  {}".format(
+        profile_index + 1, len(PROFILES), profile["name"]
+    )
+
+    for row in range(4):
         first = row * 3
-        labels = [KEYMAP[first + column]["label"] for column in range(3)]
-        lines[row].text = "{:<5} {:<4} {:<4} {:<4}".format(
-            title, labels[0], labels[1], labels[2]
+        labels = [profile["keys"][first + column]["label"] for column in range(3)]
+        display_lines[row + 1].text = "{:<4} {:<4} {:<4}".format(
+            labels[0], labels[1], labels[2]
         )
-    lines.show()
+
+    display_lines.show()
+    macropad.pixels.fill(profile["color"])
 
 
-def open_app(app_name):
-    """Open a macOS app through Spotlight without desktop-side software."""
-    macropad.keyboard.send(macropad.Keycode.GUI, macropad.Keycode.SPACE)
-    time.sleep(SPOTLIGHT_DELAY_SECONDS)
-    macropad.keyboard_layout.write(app_name)
-    time.sleep(SPOTLIGHT_DELAY_SECONDS)
-    macropad.keyboard.send(macropad.Keycode.ENTER)
+def tap_hotkey(names):
+    """Send one keyboard chord."""
+    macropad.keyboard.send(*resolve_keycodes(names))
 
 
 def press_key(index):
-    """Run the configured press action for a physical key."""
-    binding = KEYMAP[index]
+    """Run the active profile's configured press action."""
+    binding = PROFILES[active_profile]["keys"][index]
     action = binding["action"]
-    macropad.pixels[index] = brighten(binding["color"])
+    macropad.pixels[index] = brighten(PROFILES[active_profile]["color"])
 
     if action == "hold_hotkey":
-        macropad.keyboard.press(*resolve_keycodes(binding["keys"]))
+        keycodes = resolve_keycodes(binding["keys"])
+        held_keycodes[index] = keycodes
+        macropad.keyboard.press(*keycodes)
     elif action == "tap_hotkey":
-        macropad.keyboard.send(*resolve_keycodes(binding["keys"]))
-    elif action == "launch_app":
-        open_app(binding["app"])
+        tap_hotkey(binding["keys"])
+    elif action == "double_tap_hotkey":
+        tap_hotkey(binding["keys"])
+        time.sleep(DOUBLE_TAP_GAP_SECONDS)
+        tap_hotkey(binding["keys"])
     elif action == "consumer":
         code = getattr(macropad.ConsumerControlCode, binding["code"])
         macropad.consumer_control.send(code)
+    elif action == "type_text":
+        macropad.keyboard_layout.write(binding["text"])
 
 
 def release_key(index):
-    """Release held chords and restore the key's idle color."""
-    binding = KEYMAP[index]
-    if binding["action"] == "hold_hotkey":
-        macropad.keyboard.release(*resolve_keycodes(binding["keys"]))
-    macropad.pixels[index] = binding["color"]
+    """Release held chords and restore the profile color."""
+    if index in held_keycodes:
+        macropad.keyboard.release(*held_keycodes.pop(index))
+    macropad.pixels[index] = PROFILES[active_profile]["color"]
 
 
-configuration_errors = validate_keymap()
+configuration_errors = validate_profiles()
 if configuration_errors:
     raise ValueError("; ".join(configuration_errors))
 
 macropad.pixels.brightness = PIXEL_BRIGHTNESS
-for key_number, key_binding in enumerate(KEYMAP):
-    macropad.pixels[key_number] = key_binding["color"]
-
-show_layout()
+display_lines = macropad.display_text()
+held_keycodes = {}
+active_profile = 0
 last_encoder_position = macropad.encoder
+set_profile(active_profile)
 
 while True:
     key_event = macropad.keys.events.get()
@@ -99,20 +105,13 @@ while True:
         else:
             release_key(key_event.key_number)
 
-    macropad.encoder_switch_debounced.update()
-    if macropad.encoder_switch_debounced.pressed:
-        macropad.consumer_control.send(macropad.ConsumerControlCode.MUTE)
-
     encoder_position = macropad.encoder
     encoder_delta = encoder_position - last_encoder_position
     if encoder_delta:
-        volume_code = (
-            macropad.ConsumerControlCode.VOLUME_INCREMENT
-            if encoder_delta > 0
-            else macropad.ConsumerControlCode.VOLUME_DECREMENT
-        )
-        for _ in range(abs(encoder_delta)):
-            macropad.consumer_control.send(volume_code)
+        macropad.keyboard.release_all()
+        held_keycodes.clear()
+        active_profile = (active_profile + encoder_delta) % len(PROFILES)
         last_encoder_position = encoder_position
+        set_profile(active_profile)
 
     time.sleep(0.005)

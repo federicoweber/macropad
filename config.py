@@ -1,123 +1,164 @@
-"""User-editable key map for the AI MacroPad."""
+"""User-editable profiles for the AI MacroPad."""
 
-# Each label must fit in four OLED characters.
-# Colors are RGB values shown at low brightness while a key is idle.
-KEYMAP = (
-    # Row 1: Wispr Flow. Bind these chords in Flow's shortcut settings.
+
+def hotkey(label, *keys, hold=False):
+    """Create a tap or hold keyboard binding."""
+    return {
+        "label": label,
+        "action": "hold_hotkey" if hold else "tap_hotkey",
+        "keys": keys,
+    }
+
+
+def consumer(label, code):
+    """Create a USB consumer-control binding."""
+    return {"label": label, "action": "consumer", "code": code}
+
+
+def text(label, value):
+    """Create a binding that types literal text."""
+    return {"label": label, "action": "type_text", "text": value}
+
+
+def unused():
+    """Create an intentionally unassigned key."""
+    return {"label": "----", "action": "noop"}
+
+
+PROFILES = (
     {
-        "label": "PTT",
-        "action": "hold_hotkey",
-        "keys": ("CONTROL", "OPTION", "F13"),
+        "name": "FLOW",
         "color": (132, 62, 255),
+        "keys": (
+            # User-configured Flow push-to-talk shortcut.
+            hotkey("PTT", "OPTION", "W", hold=True),
+            {
+                "label": "FREE",
+                "action": "double_tap_hotkey",
+                "keys": ("OPTION", "W"),
+            },
+            hotkey("CMD", "COMMAND", "CONTROL", "OPTION", hold=True),
+            hotkey("CANC", "ESCAPE"),
+            hotkey("PAST", "COMMAND", "CONTROL", "V"),
+            hotkey("COPY", "COMMAND", "CONTROL", "C"),
+            hotkey("POL", "OPTION", "ONE"),
+            hotkey("PRMT", "OPTION", "TWO"),
+            hotkey("DIFF", "OPTION", "O"),
+            hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
+            hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
+            hotkey("NOTE", "OPTION", "S"),
+        ),
     },
     {
-        "label": "FREE",
-        "action": "tap_hotkey",
-        "keys": ("CONTROL", "OPTION", "F14"),
-        "color": (132, 62, 255),
-    },
-    {
-        "label": "CMD",
-        "action": "hold_hotkey",
-        "keys": ("CONTROL", "OPTION", "F15"),
-        "color": (132, 62, 255),
-    },
-    # Row 2: Codex and ChatGPT.
-    {
-        "label": "CDX",
-        "action": "launch_app",
-        "app": "Codex",
+        "name": "CODEX",
         "color": (0, 174, 239),
+        "keys": (
+            hotkey("QCK", "COMMAND", "OPTION", "N"),
+            hotkey("NEW", "COMMAND", "N"),
+            hotkey("SRCH", "COMMAND", "G"),
+            hotkey("PREV", "COMMAND", "SHIFT", "LEFT_BRACKET"),
+            hotkey("NEXT", "COMMAND", "SHIFT", "RIGHT_BRACKET"),
+            hotkey("FIND", "COMMAND", "F"),
+            hotkey("RVW", "CONTROL", "SHIFT", "G"),
+            hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
+            hotkey("SIDE", "COMMAND", "B"),
+            hotkey("CMD", "COMMAND", "SHIFT", "P"),
+            hotkey("BACK", "COMMAND", "LEFT_BRACKET"),
+            hotkey("FWD", "COMMAND", "RIGHT_BRACKET"),
+        ),
     },
     {
-        "label": "GPT",
-        "action": "tap_hotkey",
-        "keys": ("OPTION", "SPACE"),
-        "color": (0, 174, 239),
-    },
-    {
-        "label": "NEW",
-        "action": "tap_hotkey",
-        "keys": ("COMMAND", "N"),
-        "color": (0, 174, 239),
-    },
-    # Row 3: Town.
-    {
-        "label": "OPEN",
-        "action": "launch_app",
-        "app": "Town",
+        "name": "TOWN",
         "color": (255, 139, 44),
+        "keys": (
+            # User-configured Town global spotlight shortcut.
+            hotkey("OPEN", "OPTION", "T"),
+            hotkey("SEND", "ENTER"),
+            hotkey("LINE", "SHIFT", "ENTER"),
+            text("@", "@"),
+            hotkey("ESC", "ESCAPE"),
+            hotkey("DEL", "BACKSPACE"),
+            hotkey("UP", "UP_ARROW"),
+            hotkey("DOWN", "DOWN_ARROW"),
+            hotkey("LEFT", "LEFT_ARROW"),
+            hotkey("RGHT", "RIGHT_ARROW"),
+            unused(),
+            unused(),
+        ),
     },
     {
-        "label": "LINE",
-        "action": "tap_hotkey",
-        "keys": ("SHIFT", "ENTER"),
-        "color": (255, 139, 44),
-    },
-    {
-        "label": "SEND",
-        "action": "tap_hotkey",
-        "keys": ("ENTER",),
-        "color": (255, 139, 44),
-    },
-    # Row 4: system media controls.
-    {
-        "label": "PREV",
-        "action": "consumer",
-        "code": "SCAN_PREVIOUS_TRACK",
+        "name": "MUSIC",
         "color": (61, 214, 123),
-    },
-    {
-        "label": "PLAY",
-        "action": "consumer",
-        "code": "PLAY_PAUSE",
-        "color": (61, 214, 123),
-    },
-    {
-        "label": "NEXT",
-        "action": "consumer",
-        "code": "SCAN_NEXT_TRACK",
-        "color": (61, 214, 123),
+        "keys": (
+            consumer("PREV", "SCAN_PREVIOUS_TRACK"),
+            consumer("PLAY", "PLAY_PAUSE"),
+            consumer("NEXT", "SCAN_NEXT_TRACK"),
+            consumer("RW", "REWIND"),
+            consumer("STOP", "STOP"),
+            consumer("FF", "FAST_FORWARD"),
+            consumer("VOL-", "VOLUME_DECREMENT"),
+            consumer("MUTE", "MUTE"),
+            consumer("VOL+", "VOLUME_INCREMENT"),
+            consumer("DIM", "BRIGHTNESS_DECREMENT"),
+            unused(),
+            consumer("BRIT", "BRIGHTNESS_INCREMENT"),
+        ),
     },
 )
 
-ROW_TITLES = ("FLOW", "AI", "TOWN", "MUSIC")
-
-PIXEL_BRIGHTNESS = 0.12
-PRESS_BRIGHTNESS = 2.0
-SPOTLIGHT_DELAY_SECONDS = 0.18
+PIXEL_BRIGHTNESS = 0.14
+PRESS_BRIGHTNESS = 2.25
+DOUBLE_TAP_GAP_SECONDS = 0.12
 
 
-def validate_keymap(keymap=KEYMAP):
+def validate_profiles(profiles=PROFILES):
     """Return human-readable configuration errors."""
     errors = []
-    valid_actions = ("hold_hotkey", "tap_hotkey", "launch_app", "consumer")
+    valid_actions = (
+        "hold_hotkey",
+        "tap_hotkey",
+        "double_tap_hotkey",
+        "consumer",
+        "type_text",
+        "noop",
+    )
 
-    if len(keymap) != 12:
-        errors.append("KEYMAP must contain exactly 12 entries")
+    if not profiles:
+        errors.append("PROFILES must contain at least one profile")
 
-    for index, key in enumerate(keymap):
-        prefix = "key {}".format(index)
-        label = key.get("label", "")
-        action = key.get("action")
+    for profile_index, profile in enumerate(profiles):
+        profile_prefix = "profile {}".format(profile_index)
+        name = profile.get("name", "")
+        keys = profile.get("keys", ())
 
-        if not label or len(label) > 4:
-            errors.append("{} label must contain 1-4 characters".format(prefix))
-        if action not in valid_actions:
-            errors.append("{} has unsupported action {!r}".format(prefix, action))
-        if action in ("hold_hotkey", "tap_hotkey") and not key.get("keys"):
-            errors.append("{} must define keys".format(prefix))
-        if action == "launch_app" and not key.get("app"):
-            errors.append("{} must define app".format(prefix))
-        if action == "consumer" and not key.get("code"):
-            errors.append("{} must define code".format(prefix))
+        if not name:
+            errors.append("{} must define a name".format(profile_prefix))
+        if len(keys) != 12:
+            errors.append("{} must contain exactly 12 keys".format(profile_prefix))
 
-        color = key.get("color")
+        color = profile.get("color")
         if (
             not isinstance(color, tuple)
             or len(color) != 3
             or any(channel < 0 or channel > 255 for channel in color)
         ):
-            errors.append("{} color must be an RGB tuple".format(prefix))
+            errors.append("{} color must be an RGB tuple".format(profile_prefix))
+
+        for key_index, binding in enumerate(keys):
+            key_prefix = "{} key {}".format(profile_prefix, key_index)
+            label = binding.get("label", "")
+            action = binding.get("action")
+
+            if not label or len(label) > 4:
+                errors.append("{} label must contain 1-4 characters".format(key_prefix))
+            if action not in valid_actions:
+                errors.append("{} has unsupported action {!r}".format(key_prefix, action))
+            if action in ("hold_hotkey", "tap_hotkey", "double_tap_hotkey"):
+                if not binding.get("keys"):
+                    errors.append("{} must define keys".format(key_prefix))
+            if action == "consumer" and not binding.get("code"):
+                errors.append("{} must define code".format(key_prefix))
+            if action == "type_text" and not binding.get("text"):
+                errors.append("{} must define text".format(key_prefix))
 
     return errors

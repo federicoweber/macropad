@@ -1,34 +1,55 @@
-"""Host-side tests for the hardware-independent key map."""
+"""Host-side tests for the hardware-independent profiles."""
 
 import unittest
 
-from config import KEYMAP, ROW_TITLES, validate_keymap
+from config import PROFILES, validate_profiles
 
 
-class KeymapTests(unittest.TestCase):
-    def test_default_keymap_is_valid(self):
-        self.assertEqual(validate_keymap(), [])
+class ProfileTests(unittest.TestCase):
+    def test_default_profiles_are_valid(self):
+        self.assertEqual(validate_profiles(), [])
 
-    def test_layout_matches_physical_board(self):
-        self.assertEqual(len(KEYMAP), 12)
-        self.assertEqual(len(ROW_TITLES), 4)
-
-    def test_flow_row_uses_dedicated_shortcuts(self):
+    def test_expected_profiles_exist(self):
         self.assertEqual(
-            [binding["keys"][-1] for binding in KEYMAP[:3]],
-            ["F13", "F14", "F15"],
+            [profile["name"] for profile in PROFILES],
+            ["FLOW", "CODEX", "TOWN", "MUSIC"],
         )
 
-    def test_music_row_uses_consumer_controls(self):
+    def test_every_profile_matches_physical_board(self):
+        for profile in PROFILES:
+            self.assertEqual(len(profile["keys"]), 12)
+
+    def test_user_shortcut_overrides(self):
+        flow_ptt = PROFILES[0]["keys"][0]
+        town_open = PROFILES[2]["keys"][0]
+
+        self.assertEqual(flow_ptt["action"], "hold_hotkey")
+        self.assertEqual(flow_ptt["keys"], ("OPTION", "W"))
+        self.assertEqual(town_open["keys"], ("OPTION", "T"))
+
+    def test_flow_hands_free_double_taps_ptt(self):
+        hands_free = PROFILES[0]["keys"][1]
+        self.assertEqual(hands_free["action"], "double_tap_hotkey")
+        self.assertEqual(hands_free["keys"], ("OPTION", "W"))
+
+    def test_codex_profile_uses_native_new_and_search_shortcuts(self):
+        codex = PROFILES[1]["keys"]
+        self.assertEqual(codex[1]["keys"], ("COMMAND", "N"))
+        self.assertEqual(codex[2]["keys"], ("COMMAND", "G"))
+
+    def test_music_profile_uses_consumer_controls(self):
+        music = PROFILES[3]["keys"]
         self.assertEqual(
-            [binding["code"] for binding in KEYMAP[9:]],
+            [binding["code"] for binding in music[:3]],
             ["SCAN_PREVIOUS_TRACK", "PLAY_PAUSE", "SCAN_NEXT_TRACK"],
         )
 
     def test_validation_catches_wrong_key_count(self):
+        invalid_profile = dict(PROFILES[0])
+        invalid_profile["keys"] = invalid_profile["keys"][:-1]
         self.assertIn(
-            "KEYMAP must contain exactly 12 entries",
-            validate_keymap(KEYMAP[:-1]),
+            "profile 0 must contain exactly 12 keys",
+            validate_profiles((invalid_profile,)),
         )
 
 
