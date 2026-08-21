@@ -144,6 +144,14 @@ def equalizer_pixels(levels, gain=1.0):
     )
 
 
+def pixel_index_for_key(key_index):
+    """Map row-major key positions to the MacroPad's serpentine LEDs."""
+    row, column = divmod(key_index, 3)
+    if row % 2:
+        column = 2 - column
+    return (row * 3) + column
+
+
 def format_time(seconds):
     """Format a non-negative duration for the compact OLED."""
     seconds = max(0, int(seconds))

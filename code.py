@@ -17,6 +17,7 @@ from config import (
     LONG_PRESS_SECONDS,
     MEDIA_VISUALIZER_GAIN,
     MEDIA_VISUALIZER_ROW_COLORS,
+    MEDIA_VISUALIZER_UNLIT_FACTOR,
     MEDIA_SCROLL_UPDATE_SECONDS,
     PIXEL_BRIGHTNESS,
     PRESS_BRIGHTNESS,
@@ -34,6 +35,7 @@ from spotify_protocol import (
     equalizer_pixels,
     parse_audio_level_message,
     parse_message,
+    pixel_index_for_key,
     playback_is_active,
     playback_display_rows,
     scrolling_display_text,
@@ -183,7 +185,9 @@ def press_key(index):
     if pulse_while_held:
         held_pulse_indicators[index] = pulse_while_held
 
-    macropad.pixels[index] = brighten(PROFILES[active_profile]["color"])
+    macropad.pixels[pixel_index_for_key(index)] = brighten(
+        PROFILES[active_profile]["color"]
+    )
 
     if action == "hold_hotkey":
         keycodes = resolve_keycodes(binding["keys"])
@@ -235,7 +239,7 @@ def release_key(index):
     if held_pause_owner:
         end_media_pause(held_pause_owner)
     held_pulse_indicators.pop(index, None)
-    macropad.pixels[index] = PROFILES[active_profile]["color"]
+    macropad.pixels[pixel_index_for_key(index)] = PROFILES[active_profile]["color"]
 
 
 def service_long_presses():
@@ -266,12 +270,14 @@ def service_mode_indicator(last_update):
         levels = spotify_audio_levels
         if now - last_spotify_level_update > SPOTIFY_LEVEL_STALE_SECONDS:
             levels = (0.0, 0.0, 0.0)
-        for index, illuminated in enumerate(
+        for key_index, illuminated in enumerate(
             equalizer_pixels(levels, MEDIA_VISUALIZER_GAIN)
         ):
-            row_color = MEDIA_VISUALIZER_ROW_COLORS[index // 3]
-            macropad.pixels[index] = (
-                row_color if illuminated else dim(row_color, 0.06)
+            row_color = MEDIA_VISUALIZER_ROW_COLORS[key_index // 3]
+            macropad.pixels[pixel_index_for_key(key_index)] = (
+                row_color
+                if illuminated
+                else dim(row_color, MEDIA_VISUALIZER_UNLIT_FACTOR)
             )
     else:
         if media_visualizer_active:

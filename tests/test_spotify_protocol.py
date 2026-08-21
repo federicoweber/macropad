@@ -8,6 +8,7 @@ from spotify_protocol import (
     build_message,
     clean_field,
     equalizer_pixels,
+    pixel_index_for_key,
     format_time,
     parse_message,
     parse_audio_level_message,
@@ -46,6 +47,12 @@ class SpotifyProtocolTests(unittest.TestCase):
         full_gain = equalizer_pixels((0.7, 0.7, 0.7))
         reduced_gain = equalizer_pixels((0.7, 0.7, 0.7), 0.80)
         self.assertGreater(sum(full_gain), sum(reduced_gain))
+
+    def test_pixel_indices_follow_macropad_serpentine_rows(self):
+        self.assertEqual(
+            tuple(pixel_index_for_key(index) for index in range(12)),
+            (0, 1, 2, 5, 4, 3, 6, 7, 8, 11, 10, 9),
+        )
 
     def test_playback_pause_controller_handles_overlapping_modes(self):
         controller = PlaybackPauseController()
