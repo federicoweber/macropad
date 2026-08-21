@@ -50,12 +50,12 @@ app, including `Command+Option+N` for quick chat and `Command+N` for a new chat.
 
 | Left | Middle | Right |
 |------|--------|-------|
-| `QCK` Quick Town | `FOCS` Focus Town window | `ESC` Dismiss |
+| `QUICK` Quick Town | `FOCUS` Focus Town window | `ESC` Dismiss |
 | `HOME` Home | `SECT` Capture selection | `FULL` Capture full screen |
 | `----` Unused | `UP` Up | `----` Unused |
 | `LEFT` Left | `DOWN` Down | `RGHT` Right |
 
-`QCK` sends `Option+T`, `FOCS` sends `Option+Shift+T`, `HOME` sends `Option+H`,
+`QUICK` sends `Option+T`, `FOCUS` sends `Option+Shift+T`, `HOME` sends `Option+H`,
 `SECT` sends `Option+S`, and `FULL` sends `Option+F`. The final two rows form a
 navigation D-pad.
 
@@ -109,7 +109,7 @@ shortcut has been customized, update the matching entry in `config.py`.
 ## Customize
 
 Profiles, labels, colors, and bindings live in `config.py`. Each profile must
-contain exactly 12 keys, and OLED labels must be one to four characters.
+contain exactly 12 keys, and OLED labels must be one to five characters.
 Supported actions are:
 
 - `hold_hotkey`: hold a chord until the physical key is released

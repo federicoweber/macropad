@@ -43,7 +43,7 @@ def set_profile(profile_index):
     for row in range(4):
         first = row * 3
         labels = [profile["keys"][first + column]["label"] for column in range(3)]
-        display_lines[row + 1].text = "{:<4} {:<4} {:<4}".format(
+        display_lines[row + 1].text = "{:<5} {:<5} {:<5}".format(
             labels[0], labels[1], labels[2]
         )
 

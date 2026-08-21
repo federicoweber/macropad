@@ -40,7 +40,7 @@ class ProfileTests(unittest.TestCase):
         town = PROFILES[2]["keys"]
         self.assertEqual(
             [binding["label"] for binding in town[:6]],
-            ["QCK", "FOCS", "ESC", "HOME", "SECT", "FULL"],
+            ["QUICK", "FOCUS", "ESC", "HOME", "SECT", "FULL"],
         )
         self.assertEqual(town[1]["keys"], ("OPTION", "SHIFT", "T"))
         self.assertEqual(town[3]["keys"], ("OPTION", "H"))

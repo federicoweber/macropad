@@ -72,8 +72,8 @@ PROFILES = (
         "color": (255, 139, 44),
         "keys": (
             # User-configured Town global spotlight shortcut.
-            hotkey("QCK", "OPTION", "T"),
-            hotkey("FOCS", "OPTION", "SHIFT", "T"),
+            hotkey("QUICK", "OPTION", "T"),
+            hotkey("FOCUS", "OPTION", "SHIFT", "T"),
             hotkey("ESC", "ESCAPE"),
             hotkey("HOME", "OPTION", "H"),
             hotkey("SECT", "OPTION", "S"),
@@ -149,8 +149,8 @@ def validate_profiles(profiles=PROFILES):
             label = binding.get("label", "")
             action = binding.get("action")
 
-            if not label or len(label) > 4:
-                errors.append("{} label must contain 1-4 characters".format(key_prefix))
+            if not label or len(label) > 5:
+                errors.append("{} label must contain 1-5 characters".format(key_prefix))
             if action not in valid_actions:
                 errors.append("{} has unsupported action {!r}".format(key_prefix, action))
             if action in ("hold_hotkey", "tap_hotkey", "double_tap_hotkey"):
