@@ -58,14 +58,15 @@ The remaining shortcuts use Flow's current native bindings:
 | Left | Middle | Right |
 |------|--------|-------|
 | `CMD` Command menu | `VOICE` Voice Mode | `ESC` Dismiss |
-| `ENTER` Submit | `NEW` New chat | `TERM` Terminal |
+| `ENTER` Submit | `MUTE` Toggle mute | `TERM` Terminal |
 | `BACK` Navigate back | `UP` Up | `FWD` Navigate forward |
 | `LEFT` Left | `DOWN` Down | `RIGHT` Right |
 
 `VOICE` sends `Option+C`, matching the user-verified Codex Voice Mode shortcut.
-`CMD` sends `Command+Shift+P`, while `NEW` sends `Command+N`. The command menu,
-new-chat, terminal, and back/forward actions use Codex's native shortcuts. The
-final two rows provide the shared navigation pad.
+`CMD` sends `Command+Shift+P`, while `MUTE` sends
+`Control+Option+Shift+C`. The command menu, mute, terminal, and back/forward
+actions use Codex's native shortcuts. The final two rows provide the shared
+navigation pad.
 
 Because the MacroPad cannot read app state from macOS, the pulse tracks button
 presses rather than querying Wispr Flow or Codex. If a mode is stopped elsewhere,

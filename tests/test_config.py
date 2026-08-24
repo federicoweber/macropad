@@ -176,14 +176,17 @@ class ProfileTests(unittest.TestCase):
             [binding["label"] for binding in codex],
             [
                 "CMD", "VOICE", "ESC",
-                "ENTER", "NEW", "TERM",
+                "ENTER", "MUTE", "TERM",
                 "BACK", "UP", "FWD",
                 "LEFT", "DOWN", "RIGHT",
             ],
         )
         self.assertEqual(codex[0]["keys"], ("COMMAND", "SHIFT", "P"))
         self.assertEqual(codex[1]["keys"], ("OPTION", "C"))
-        self.assertEqual(codex[4]["keys"], ("COMMAND", "N"))
+        self.assertEqual(
+            codex[4]["keys"],
+            ("CONTROL", "OPTION", "SHIFT", "C"),
+        )
         self.assertEqual(codex[5]["keys"], ("CONTROL", "GRAVE_ACCENT"))
         self.assertEqual(codex[7]["keys"], ("UP_ARROW",))
 

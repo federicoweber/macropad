@@ -106,7 +106,7 @@ PROFILES = (
                 "mode_clear": ("codex_voice",),
             },
             enter_key(),
-            hotkey("NEW", "COMMAND", "N"),
+            hotkey("MUTE", "CONTROL", "OPTION", "SHIFT", "C"),
             hotkey("TERM", "CONTROL", "GRAVE_ACCENT"),
         ) + navigation_pad(),
     },
