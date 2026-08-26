@@ -52,7 +52,8 @@ def clean_field(value):
 
 
 def build_message(
-    state, title="", artist="", position=0, duration=0, album=""
+    state, title="", artist="", position=0, duration=0, album="",
+    track_number=0, track_total=0
 ):
     """Build one newline-delimited playback update."""
     fields = [PREFIX, clean_field(state)]
@@ -64,6 +65,8 @@ def build_message(
                 clean_field(album),
                 str(max(0, int(position))),
                 str(max(0, int(duration))),
+                str(max(0, int(track_number))),
+                str(max(0, int(track_total))),
             )
         )
     return "\t".join(fields) + "\n"
@@ -86,13 +89,17 @@ def parse_message(line):
             "album": "",
             "position": 0,
             "duration": 0,
+            "track_number": 0,
+            "track_total": 0,
         }
-    if len(fields) != 7:
+    if len(fields) not in (7, 9):
         return None
 
     try:
         position = max(0, int(fields[5]))
         duration = max(0, int(fields[6]))
+        track_number = max(0, int(fields[7])) if len(fields) == 9 else 0
+        track_total = max(0, int(fields[8])) if len(fields) == 9 else 0
     except ValueError:
         return None
 
@@ -103,6 +110,8 @@ def parse_message(line):
         "album": fields[4],
         "position": position,
         "duration": duration,
+        "track_number": track_number,
+        "track_total": track_total,
     }
 
 
@@ -201,6 +210,12 @@ def playback_display_rows(playback):
         format_time(playback.get("position", 0)),
         format_time(playback.get("duration", 0)),
     )
+    track_number = playback.get("track_number", 0)
+    track_total = playback.get("track_total", 0)
+    if track_number and track_total:
+        progress = "({}/{}) {}".format(track_number, track_total, progress)
+    elif track_number:
+        progress = "({}) {}".format(track_number, progress)
     return (
         artist,
         album,

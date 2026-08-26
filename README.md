@@ -95,8 +95,9 @@ and `FULL` sends `Option+F`. The final two rows form a navigation D-pad.
 
 Media uses native USB consumer-control commands and works without app-specific
 configuration. While Spotify is playing, the OLED shows the artist, album,
-song, and elapsed/total playback time. Artist, album, and song lines that exceed
-the display width automatically scroll from their beginning to their end.
+song, and `(track/album total)` alongside elapsed/total playback time. Artist,
+album, song, and progress lines that exceed the display width automatically
+scroll from their beginning to their end.
 Press `INFO` to toggle between that view and the Media keymap. If Spotify is
 paused, stopped, or unavailable, the keymap remains visible. In the keymap
 view, the center transport label changes to `PAUSE` while Spotify is playing
@@ -219,6 +220,7 @@ code.py                 Profile switching and hardware event loop
 config.py               Profiles, key bindings, labels, and colors
 spotify_protocol.py     Shared compact metadata protocol
 spotify_relay.py        Local macOS Spotify-to-USB relay
+spotify_web_metadata.py Cached public album track-total lookup
 host/SpotifyAudioMeter  Native Spotify-only audio-level helper
 launchd/                Optional automatic relay startup
 requirements.txt        CircuitPython libraries installed on the board

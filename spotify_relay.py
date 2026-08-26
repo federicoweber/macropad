@@ -13,6 +13,7 @@ import serial
 from serial.tools import list_ports
 
 from spotify_protocol import build_audio_level_message, build_message
+from spotify_web_metadata import SpotifyAlbumTrackCounter
 
 
 SPOTIFY_JXA = r'''
@@ -32,7 +33,9 @@ if (!spotify.running()) {
       artist: String(track.artist()),
       album: String(track.album()),
       duration: Number(track.duration()),
-      position: Number(spotify.playerPosition())
+      position: Number(spotify.playerPosition()),
+      track_number: Number(track.trackNumber()),
+      spotify_url: String(track.spotifyUrl())
     };
   }
 }
@@ -53,7 +56,7 @@ AUDIO_METER_PATH = os.path.join(
 )
 
 
-def read_spotify():
+def read_spotify(track_counter=None):
     """Read Spotify without launching it or requiring Web API credentials."""
     result = subprocess.run(
         ["/usr/bin/osascript", "-l", "JavaScript", "-e", SPOTIFY_JXA],
@@ -68,6 +71,12 @@ def read_spotify():
     if duration > 10000:
         duration /= 1000
     playback["duration"] = duration
+    playback["track_number"] = max(0, int(playback.get("track_number", 0)))
+    playback["track_total"] = (
+        track_counter.resolve(playback.get("spotify_url", ""))
+        if track_counter and playback.get("state") in ("playing", "paused")
+        else 0
+    )
     return playback
 
 
@@ -78,6 +87,7 @@ class SpotifyPoller:
         self.interval = interval
         self.lock = threading.Lock()
         self.playback = {"state": "stopped"}
+        self.track_counter = SpotifyAlbumTrackCounter()
         self.thread = threading.Thread(target=self._run, daemon=True)
 
     def start(self):
@@ -91,7 +101,7 @@ class SpotifyPoller:
         while True:
             started_at = time.monotonic()
             try:
-                playback = read_spotify()
+                playback = read_spotify(self.track_counter)
                 with self.lock:
                     self.playback = playback
             except (OSError, ValueError, subprocess.SubprocessError) as error:
@@ -245,6 +255,8 @@ def relay(port_name=None, interval=1.0):
                     playback.get("position", 0),
                     playback.get("duration", 0),
                     playback.get("album", ""),
+                    playback.get("track_number", 0),
+                    playback.get("track_total", 0),
                 )
                 next_metadata_update = now + interval
 

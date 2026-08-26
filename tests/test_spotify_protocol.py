@@ -94,7 +94,8 @@ class SpotifyProtocolTests(unittest.TestCase):
 
     def test_round_trip_playing_message(self):
         message = build_message(
-            "playing", "Easier To Run", "Linkin Park", 155, 204, "Meteora"
+            "playing", "Easier To Run", "Linkin Park", 155, 204, "Meteora",
+            3, 13
         )
         self.assertEqual(
             parse_message(message),
@@ -105,6 +106,8 @@ class SpotifyProtocolTests(unittest.TestCase):
                 "album": "Meteora",
                 "position": 155,
                 "duration": 204,
+                "track_number": 3,
+                "track_total": 13,
             },
         )
 
@@ -127,13 +130,21 @@ class SpotifyProtocolTests(unittest.TestCase):
                 65,
                 245,
                 "An album with a very long name",
+                1,
+                12,
             )
         )
         rows = playback_display_rows(playback)
         self.assertEqual(rows[0], "A very long artist name")
         self.assertEqual(rows[1], "An album with a very long name")
         self.assertEqual(rows[2], "A title that is much longer than the OLED")
-        self.assertEqual(rows[3], "1:05 / 4:05")
+        self.assertEqual(rows[3], "(1/12) 1:05 / 4:05")
+
+    def test_playing_rows_show_track_number_without_known_total(self):
+        playback = parse_message(
+            build_message("playing", "Song", "Artist", 5, 60, "Album", 4, 0)
+        )
+        self.assertEqual(playback_display_rows(playback)[3], "(4) 0:05 / 1:00")
 
     def test_long_display_text_scrolls_toward_the_end(self):
         text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

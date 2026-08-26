@@ -16,7 +16,7 @@ audio-meter:
 
 check:
 	PYTHONPYCACHEPREFIX="$(PYCACHE_DIR)" python3 -m unittest discover -s tests -v
-	PYTHONPYCACHEPREFIX="$(PYCACHE_DIR)" python3 -m compileall -q boot.py code.py config.py spotify_protocol.py spotify_relay.py tests
+	PYTHONPYCACHEPREFIX="$(PYCACHE_DIR)" python3 -m compileall -q boot.py code.py config.py spotify_protocol.py spotify_relay.py spotify_web_metadata.py tests
 
 libraries:
 	test -d "$(CIRCUITPY)"
