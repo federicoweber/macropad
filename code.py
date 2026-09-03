@@ -70,8 +70,8 @@ def dim(color, factor):
     return tuple(int(channel * factor) for channel in color)
 
 
-def set_profile(profile_index):
-    """Update the OLED and LEDs for the selected profile."""
+def refresh_profile_display(profile_index):
+    """Update the OLED for the selected profile without touching its LEDs."""
     profile = PROFILES[profile_index]
     title = "{}/{}  {}".format(
         profile_index + 1, len(PROFILES), profile["name"]
@@ -103,6 +103,14 @@ def set_profile(profile_index):
             )
 
     display_lines.show()
+
+
+def set_profile(profile_index):
+    """Update the OLED and idle LEDs for the selected profile."""
+    profile = PROFILES[profile_index]
+    refresh_profile_display(profile_index)
+    if profile["name"] == "MEDIA" and playback_is_active(spotify_playback):
+        return
     macropad.pixels.fill(profile["color"])
 
 
@@ -210,12 +218,12 @@ def press_key(index):
         macropad.keyboard_layout.write(binding["text"])
     elif action == "toggle_auto_pause":
         toggle_auto_pause()
-        set_profile(active_profile)
+        refresh_profile_display(active_profile)
     elif action == "toggle_media_display":
         media_info_enabled = not media_info_enabled
         if media_info_enabled:
             media_scroll_step = 0
-        set_profile(active_profile)
+        refresh_profile_display(active_profile)
 
     if mode_toggle:
         if mode_toggle in active_mode_indicators:
@@ -328,7 +336,7 @@ def apply_spotify_message(line):
     spotify_playback = playback
     last_spotify_update = time.monotonic()
     if PROFILES[active_profile]["name"] == "MEDIA" and not encoder_navigation_active:
-        set_profile(active_profile)
+        refresh_profile_display(active_profile)
 
 
 def service_spotify_serial():
