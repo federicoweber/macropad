@@ -45,8 +45,8 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(MEDIA_VISUALIZER_GAIN, 0.80)
 
     def test_media_visualizer_fades_in_and_out(self):
-        self.assertEqual(MEDIA_VISUALIZER_ATTACK, 0.35)
-        self.assertEqual(MEDIA_VISUALIZER_RELEASE, 0.12)
+        self.assertEqual(MEDIA_VISUALIZER_ATTACK, 0.60)
+        self.assertEqual(MEDIA_VISUALIZER_RELEASE, 0.25)
         self.assertGreater(MEDIA_VISUALIZER_ATTACK, MEDIA_VISUALIZER_RELEASE)
 
     def test_media_visualizer_transitions_from_green_to_red(self):
