@@ -49,16 +49,10 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(MEDIA_VISUALIZER_RELEASE, 0.25)
         self.assertGreater(MEDIA_VISUALIZER_ATTACK, MEDIA_VISUALIZER_RELEASE)
 
-    def test_media_visualizer_transitions_from_green_to_red(self):
-        self.assertEqual(MEDIA_VISUALIZER_ROW_COLORS[-1], (0, 255, 48))
-        self.assertEqual(MEDIA_VISUALIZER_ROW_COLORS[0], (255, 0, 0))
-        self.assertGreater(
-            MEDIA_VISUALIZER_ROW_COLORS[2][1],
-            MEDIA_VISUALIZER_ROW_COLORS[2][0],
-        )
-        self.assertGreater(
-            MEDIA_VISUALIZER_ROW_COLORS[1][0],
-            MEDIA_VISUALIZER_ROW_COLORS[1][1],
+    def test_media_visualizer_is_monochromatic_yellow(self):
+        self.assertEqual(
+            MEDIA_VISUALIZER_ROW_COLORS,
+            ((255, 255, 0),) * 4,
         )
 
     def test_every_profile_matches_physical_board(self):
