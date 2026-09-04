@@ -52,7 +52,7 @@ class ProfileTests(unittest.TestCase):
     def test_media_visualizer_is_monochromatic_yellow(self):
         self.assertEqual(
             MEDIA_VISUALIZER_ROW_COLORS,
-            ((255, 255, 0),) * 4,
+            ((255, 120, 0),) * 4,
         )
 
     def test_every_profile_matches_physical_board(self):
