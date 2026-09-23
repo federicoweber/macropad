@@ -9,6 +9,7 @@ from spotify_protocol import (
     clean_field,
     equalizer_intensities,
     equalizer_pixels,
+    media_keymap_preview_active,
     pixel_index_for_key,
     format_time,
     parse_message,
@@ -169,6 +170,15 @@ class SpotifyProtocolTests(unittest.TestCase):
         self.assertFalse(playback_is_active({"state": "paused"}))
         self.assertFalse(playback_is_active({"state": "stopped"}))
         self.assertTrue(playback_is_active({"state": "playing"}))
+
+    def test_media_keymap_preview_requires_active_info_playback(self):
+        playing = {"state": "playing"}
+        self.assertTrue(media_keymap_preview_active(playing, True, 13.0, 10.0))
+        self.assertFalse(media_keymap_preview_active(playing, True, 13.0, 13.0))
+        self.assertFalse(media_keymap_preview_active(playing, False, 13.0, 10.0))
+        self.assertFalse(
+            media_keymap_preview_active({"state": "paused"}, True, 13.0, 10.0)
+        )
 
     def test_malformed_messages_are_ignored(self):
         self.assertIsNone(parse_message("hello"))

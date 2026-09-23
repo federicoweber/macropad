@@ -15,6 +15,7 @@ from config import (
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
     LONG_PRESS_SECONDS,
+    MEDIA_KEYMAP_PREVIEW_SECONDS,
     MEDIA_VISUALIZER_ATTACK,
     MEDIA_VISUALIZER_GAIN,
     MEDIA_VISUALIZER_RELEASE,
@@ -34,6 +35,7 @@ from spotify_protocol import (
     DISPLAY_WIDTH,
     PlaybackPauseController,
     equalizer_intensities,
+    media_keymap_preview_active,
     parse_audio_level_message,
     parse_message,
     pixel_index_for_key,
@@ -79,7 +81,13 @@ def refresh_profile_display(profile_index):
     display_lines[0].text = "{:<21}".format(title.upper())
 
     playback_rows = None
-    if profile["name"] == "MEDIA" and media_info_enabled:
+    preview_active = media_keymap_preview_active(
+        spotify_playback,
+        media_info_enabled,
+        media_keymap_preview_until,
+        time.monotonic(),
+    )
+    if profile["name"] == "MEDIA" and media_info_enabled and not preview_active:
         playback_rows = playback_display_rows(spotify_playback)
 
     if playback_rows:
@@ -171,9 +179,26 @@ def toggle_auto_pause():
             toggle_media_playback()
 
 
+def begin_media_keymap_preview():
+    """Temporarily reveal Media key labels while playback info is visible."""
+    global media_keymap_preview_until
+
+    if (
+        PROFILES[active_profile]["name"] != "MEDIA"
+        or not media_info_enabled
+        or not playback_is_active(spotify_playback)
+    ):
+        return
+    media_keymap_preview_until = (
+        time.monotonic() + MEDIA_KEYMAP_PREVIEW_SECONDS
+    )
+    if not encoder_navigation_active:
+        refresh_profile_display(active_profile)
+
+
 def press_key(index):
     """Run the active profile's configured press action."""
-    global media_info_enabled, media_scroll_step
+    global media_info_enabled, media_keymap_preview_until, media_scroll_step
 
     binding = PROFILES[active_profile]["keys"][index]
     action = binding["action"]
@@ -183,6 +208,8 @@ def press_key(index):
         mode_toggle is not None
         and mode_toggle not in active_mode_indicators
     )
+
+    begin_media_keymap_preview()
 
     if pause_policy == "while_held":
         owner = "held:{}:{}".format(active_profile, index)
@@ -221,6 +248,7 @@ def press_key(index):
         refresh_profile_display(active_profile)
     elif action == "toggle_media_display":
         media_info_enabled = not media_info_enabled
+        media_keymap_preview_until = 0.0
         if media_info_enabled:
             media_scroll_step = 0
         refresh_profile_display(active_profile)
@@ -367,6 +395,29 @@ def service_spotify_serial():
             set_profile(active_profile)
 
 
+def service_media_keymap_preview():
+    """Restore playback info after three seconds without a Media key press."""
+    global media_keymap_preview_until, media_scroll_step
+
+    if not media_keymap_preview_until:
+        return
+    now = time.monotonic()
+    if (
+        PROFILES[active_profile]["name"] != "MEDIA"
+        or not media_info_enabled
+        or not playback_is_active(spotify_playback)
+    ):
+        media_keymap_preview_until = 0.0
+        return
+    if now < media_keymap_preview_until:
+        return
+
+    media_keymap_preview_until = 0.0
+    media_scroll_step = 0
+    if not encoder_navigation_active:
+        refresh_profile_display(active_profile)
+
+
 def service_media_scroll(last_update):
     """Advance overflowing Spotify rows without blocking key input."""
     global media_scroll_step
@@ -378,6 +429,12 @@ def service_media_scroll(last_update):
         PROFILES[active_profile]["name"] != "MEDIA"
         or not media_info_enabled
         or encoder_navigation_active
+        or media_keymap_preview_active(
+            spotify_playback,
+            media_info_enabled,
+            media_keymap_preview_until,
+            now,
+        )
     ):
         return now
 
@@ -432,6 +489,7 @@ spotify_serial_buffer = ""
 last_spotify_update = 0.0
 last_spotify_level_update = 0.0
 media_info_enabled = True
+media_keymap_preview_until = 0.0
 media_scroll_step = 0
 media_visualizer_active = False
 media_visualizer_intensities = (0.0,) * 12
@@ -461,6 +519,7 @@ while True:
     service_long_presses()
     last_pulse_update = service_mode_indicator(last_pulse_update)
     service_spotify_serial()
+    service_media_keymap_preview()
     last_media_scroll_update = service_media_scroll(last_media_scroll_update)
 
     encoder_position = macropad.encoder

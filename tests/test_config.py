@@ -7,6 +7,7 @@ from config import (
     ENCODER_PRESSED_LEFT_KEYS,
     ENCODER_PRESSED_RIGHT_KEYS,
     ENCODER_RIGHT_ARROW_POINTS,
+    MEDIA_KEYMAP_PREVIEW_SECONDS,
     MEDIA_VISUALIZER_ATTACK,
     MEDIA_VISUALIZER_GAIN,
     MEDIA_VISUALIZER_RELEASE,
@@ -54,6 +55,9 @@ class ProfileTests(unittest.TestCase):
             MEDIA_VISUALIZER_ROW_COLORS,
             ((255, 120, 0),) * 4,
         )
+
+    def test_media_keymap_preview_uses_three_second_timeout(self):
+        self.assertEqual(MEDIA_KEYMAP_PREVIEW_SECONDS, 3.0)
 
     def test_every_profile_matches_physical_board(self):
         for profile in PROFILES:

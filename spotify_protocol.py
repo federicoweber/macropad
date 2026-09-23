@@ -253,3 +253,12 @@ def transport_label(playback):
 def playback_is_active(playback):
     """Return whether Spotify reports active playback."""
     return bool(playback and playback.get("state") == "playing")
+
+
+def media_keymap_preview_active(playback, info_enabled, preview_until, now):
+    """Return whether the temporary Media keymap should cover playback info."""
+    return (
+        info_enabled
+        and playback_is_active(playback)
+        and now < preview_until
+    )
